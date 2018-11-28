@@ -24,6 +24,19 @@ public class Orders {
     @Column(nullable = false)
     private String variety;
 
+    @Column(nullable = false)
+    private Employee employee;
+
+    @Column(nullable = false)
+    private Boolean billStatus;
+
+    @Column(nullable = false)
+    private Customer customer;
+
+    @Column(nullable = false)
+    private String aftersale_record;
+
+
     public Integer getId() {
         return id;
     }
