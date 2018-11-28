@@ -9,14 +9,17 @@
 .settings
 .springBeans
 .sts4-cache
-.idea
-.mvn
 
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
+
+### Maven ###
+.mvn
+mvnw
+mvnw.cmd
 
 ### NetBeans ###
 /nbproject/private/
