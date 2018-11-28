@@ -9,9 +9,6 @@ public class SaleOpportunity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false)
-    private Boolean isDeclare;
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "employeeId", referencedColumnName = "id")
     private Employee employee;
@@ -33,14 +30,6 @@ public class SaleOpportunity {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Boolean getDeclare() {
-        return isDeclare;
-    }
-
-    public void setDeclare(Boolean declare) {
-        isDeclare = declare;
     }
 
     public List<Product> getProductList() {
