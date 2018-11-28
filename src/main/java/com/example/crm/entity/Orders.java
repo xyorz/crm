@@ -34,7 +34,7 @@ public class Orders {
     private Customer customer;
 
     @Column(nullable = false)
-    private String aftersale_record;
+    private String aftersaleRecord;
 
 
     public Integer getId() {
@@ -83,5 +83,37 @@ public class Orders {
 
     public void setVariety(String variety) {
         this.variety = variety;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Boolean getBillStatus() {
+        return billStatus;
+    }
+
+    public void setBillStatus(Boolean billStatus) {
+        this.billStatus = billStatus;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public String getAftersaleRecord() {
+        return aftersaleRecord;
+    }
+
+    public void setAftersaleRecord(String aftersaleRecord) {
+        this.aftersaleRecord = aftersaleRecord;
     }
 }
