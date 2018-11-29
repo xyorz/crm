@@ -21,11 +21,22 @@ public class SaleOpportunity {
     private List<Product> productList;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "linkManName", referencedColumnName = "name")
-    private LinkMan linkMan;
+    @JoinColumn(name = "Customer", referencedColumnName = "name")
+    private Customer customer;
 
     @Column(nullable = false)
     private String record;
+
+    public SaleOpportunity() {
+    }
+
+    public SaleOpportunity(Boolean isDeclare, Employee employee, List<Product> productList, Customer customer, String record) {
+        this.isDeclare = isDeclare;
+        this.employee = employee;
+        this.productList = productList;
+        this.customer = customer;
+        this.record = record;
+    }
 
     public Integer getId() {
         return id;
@@ -59,12 +70,12 @@ public class SaleOpportunity {
         this.employee = employee;
     }
 
-    public LinkMan getLinkMan() {
-        return linkMan;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setLinkMan(LinkMan linkMan) {
-        this.linkMan = linkMan;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public String getRecord() {

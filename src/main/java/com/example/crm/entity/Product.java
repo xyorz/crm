@@ -23,6 +23,17 @@ public class Product {
     @Column(nullable = false)
     private String analysis;
 
+    public Product() {
+    }
+
+    public Product(String variety, Integer amount, float cost, float price, String analysis) {
+        this.variety = variety;
+        this.amount = amount;
+        this.cost = cost;
+        this.price = price;
+        this.analysis = analysis;
+    }
+
     public Integer getId() {
         return id;
     }

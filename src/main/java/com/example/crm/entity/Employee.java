@@ -22,11 +22,22 @@ public class Employee {
     private String password;
 
     @Column(nullable = false)
-
     private Boolean empty;
 
     @Column(nullable = false)
     private String remark;
+
+    public Employee() {
+    }
+
+    public Employee(String name, Boolean sex, String tel, String password, Boolean empty, String remark) {
+        this.name = name;
+        this.sex = sex;
+        this.tel = tel;
+        this.password = password;
+        this.empty = empty;
+        this.remark = remark;
+    }
 
     public Integer getId() {
         return id;

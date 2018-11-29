@@ -18,6 +18,15 @@ public class LinkMan {
     @Column(nullable = false)
     private String tel;
 
+    public LinkMan() {
+    }
+
+    public LinkMan(String name, Customer customer, String tel) {
+        this.name = name;
+        this.customer = customer;
+        this.tel = tel;
+    }
+
     public Integer getId() {
         return id;
     }

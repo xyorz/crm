@@ -23,6 +23,17 @@ public class Customer {
     @Column(nullable = false)
     private Integer credit;
 
+    public Customer() {
+    }
+
+    public Customer(String name, String tel, String address, String text, Integer credit) {
+        this.name = name;
+        this.tel = tel;
+        this.address = address;
+        this.text = text;
+        this.credit = credit;
+    }
+
     public Integer getId() {
         return id;
     }

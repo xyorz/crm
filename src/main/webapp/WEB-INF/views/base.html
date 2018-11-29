@@ -1,39 +1,224 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head th:fragment="commonHead(title)">
-    <meta charset="utf-8">
+    <meta charset="utf-8"/>
+    <title th:text="${title}">Conquer | Admin Dashboard Template</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title th:text="${title}">Bootstrap 101 Template</title>
-
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet" th:href="@{/bootstrap-3.3.7-dist/css/bootstrap.css}">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta content="" name="description"/>
+    <meta content="" name="author"/>
+    <meta name="MobileOptimized" content="320">
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
+    <link href="assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="assets/plugins/select2/select2.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+    <!-- END PAGE LEVEL STYLES -->
+    <!-- BEGIN THEME STYLES -->
+    <link href="assets/css/style-conquer.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/css/style-responsive.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/css/plugins.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/css/themes/default.css" rel="stylesheet" type="text/css" id="style_color"/>
+    <link href="assets/css/custom.css" rel="stylesheet" type="text/css"/>
+    <!-- END THEME STYLES -->
+    <link rel="shortcut icon" href="favicon.ico"/>
 </head>
 <body>
 
-<div th:fragment="commonNav">
-    <nav class="nav navbar-default">
-        <div class="container-fluid row">
-            <div class="navbar-header col-md-1">
-                <a href="#" class="navbar-brand">xyorz</a>
-            </div>
-            <ul class="nav navbar-nav col-md-11">
-                <li><a href="#">Link</a></li>
-                <li><a href="#">Gateway</a></li>
-                <li><a href="#">Manage</a></li>
-                <li><a href="#">Example</a></li>
-            </ul>
+<div class="header navbar navbar-fixed-top" th:fragment="commonBar">
+    <!-- BEGIN TOP NAVIGATION BAR -->
+    <div class="header-inner">
+        <!-- BEGIN LOGO -->
+        <div class="page-logo">
+            <a href="index.html" th:href="@{/index}">
+                <img src="" alt="logo"/>
+            </a>
         </div>
-    </nav>
+        <form class="search-form search-form-header" role="form" action="index.html">
+            <div class="input-icon right">
+                <i class="icon-magnifier"></i>
+                <input type="text" class="form-control input-sm" name="query" placeholder="Search...">
+            </div>
+        </form>
+        <!-- END LOGO -->
+        <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+        <a href="javascript:;" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <img src="assets/img/menu-toggler.png" alt=""/>
+        </a>
+        <!-- END RESPONSIVE MENU TOGGLER -->
+        <!-- BEGIN TOP NAVIGATION MENU -->
+        <ul class="nav navbar-nav pull-right">
+            <!-- BEGIN NOTIFICATION DROPDOWN -->
+            <li class="dropdown" id="header_notification_bar">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                    <i class="icon-bell"></i>
+                    <span class="badge badge-success">n</span>
+                </a>
+                <ul class="dropdown-menu extended notification">
+                    <li class="external">
+                        <a href="#">See all notifications <i class="fa fa-angle-right"></i></a>
+                    </li>
+                </ul>
+            </li>
+            <!-- END NOTIFICATION DROPDOWN -->
+            <!-- BEGIN INBOX DROPDOWN -->
+            <li class="dropdown" id="header_inbox_bar">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                    <i class="icon-envelope-open"></i>
+                    <span class="badge badge-info">
+				n </span>
+                </a>
+                <ul class="dropdown-menu extended inbox">
+                    <li class="external">
+                        <a href="inbox.html">See all messages <i class="fa fa-angle-right"></i></a>
+                    </li>
+                </ul>
+            </li>
+            <!-- END INBOX DROPDOWN -->
+            <!-- BEGIN TODO DROPDOWN -->
+            <li class="dropdown" id="header_task_bar">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                    <i class="icon-calendar"></i>
+                    <span class="badge badge-warning">
+				n </span>
+                </a>
+                <ul class="dropdown-menu extended tasks">
+                    <li class="external">
+                        <a href="#">See all tasks <i class="fa fa-angle-right"></i></a>
+                    </li>
+                </ul>
+            </li>
+            <!-- END TODO DROPDOWN -->
+            <li class="devider">
+                &nbsp;
+            </li>
+            <!-- BEGIN USER LOGIN DROPDOWN -->
+            <li class="dropdown user">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                    <img alt="" src=""/>
+                    <span class="username username-hide-on-mobile">Nick </span>
+                    <i class="fa fa-angle-down"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="#"><i class="fa fa-tasks"></i> My Tasks <span class="badge badge-success">
+						7 </span>
+                        </a>
+                    </li>
+                    <li class="divider">
+                    </li>
+                    <li>
+                        <a href="login.html" th:href="@{/login}"><i class="fa fa-key"></i> Log Out</a>
+                    </li>
+                </ul>
+            </li>
+            <!-- END USER LOGIN DROPDOWN -->
+        </ul>
+        <!-- END TOP NAVIGATION MENU -->
+    </div>
+    <!-- END TOP NAVIGATION BAR -->
 </div>
 
-<div th:fragment="commonJS">
-<!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"  th:src="@{/bootstrap-3.3.7-dist/js/jquery-3.3.1.min.js}"></script>
-    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" th:src="@{/bootstrap-3.3.7-dist/js/bootstrap.js}"></script>
+<!-- BEGIN SIDEBAR -->
+<div class="page-sidebar-wrapper" th:fragment="commonSideBar">
+    <div class="page-sidebar navbar-collapse collapse">
+        <!-- BEGIN SIDEBAR MENU -->
+        <!-- DOC: for circle icon style menu apply page-sidebar-menu-circle-icons class right after sidebar-toggler-wrapper -->
+        <ul class="page-sidebar-menu">
+            <li class="sidebar-toggler-wrapper">
+                <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+                <div class="sidebar-toggler">
+                </div>
+                <div class="clearfix">
+                </div>
+                <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+            </li>
+            <li class="sidebar-search-wrapper">
+                <form class="search-form" role="form" action="index.html" method="get">
+                    <div class="input-icon right">
+                        <i class="icon-magnifier"></i>
+                        <input type="text" class="form-control" name="query" placeholder="Search...">
+                    </div>
+                </form>
+            </li>
+            <li class="start active ">
+                <a href="index.html" th:href="@{/}">
+                    <i class="icon-home"></i>
+                    <span class="title">首页</span>
+                    <span class="selected"></span>
+                </a>
+            </li>
+            <li >
+                <a href="javascript:;">
+                    <i class="icon-puzzle"></i>
+                    <span class="title">客户</span>
+                    <span class="arrow "></span>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="customer.html" th:href="@{/customer}">
+                            客户信息</a>
+                    </li>
+                    <li>
+                        <a href="customer_share.html" th:href="@{/customer_share}">
+                            客户共享</a>
+                    </li>
+                    <li>
+                        <a href="customer_analysis.html" th:href="@{/customer_analysis}">
+                            客户统计分析</a>
+                    </li>
+                </ul>
+            </li>
+            <li >
+                <a href="javascript:;">
+                    <i class="icon-present"></i>
+                    <span class="title">产品</span>
+                    <span class="arrow "></span>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="product.html" th:href="@{/product}">
+                            产品信息</a>
+                    </li>
+                </ul>
+            </li>
+            <li >
+                <a href="javascript:;">
+                    <i class="icon-calendar"></i>
+                    <span class="title">销售</span>
+                    <span class="arrow "></span>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="sale_opportunity.html" th:href="@{/sale_opportunity}">
+                            销售机会信息</a>
+                    </li>
+                </ul>
+            </li>
+            <li >
+                <a href="javascript:;">
+                    <i class="icon-docs"></i>
+                    <span class="title">订单</span>
+                    <span class="arrow "></span>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="order.html" th:href="@{/order}">
+                            订单信息</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <!-- END SIDEBAR MENU -->
+    </div>
 </div>
+<!-- END SIDEBAR -->
 
 </body>
 </html>
