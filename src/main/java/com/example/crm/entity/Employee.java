@@ -3,6 +3,7 @@ package com.example.crm.entity;
 
 import javax.persistence.*;
 
+
 @Entity
 public class Employee {
     @Id
