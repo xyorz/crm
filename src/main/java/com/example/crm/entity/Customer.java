@@ -13,7 +13,7 @@ public class Customer {
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn
+    @JoinColumn(name = "customer_id")
     private List<LinkMan> linkMen;
 
     @Column(nullable = false)
