@@ -16,19 +16,22 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.*;
 
 @Controller
-@RequestMapping(path = "/sale_opportunity")
+@RequestMapping(path = "sale_opportunity")
 public class SaleOpportunityController {
 
     @Autowired
     private SaleOpportunityRepository saleOpportunityRepository;
+    @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
     private EmployeeRepository employeeRepository;
+    @Autowired
     private ProductRepository productRepository;
 
     @GetMapping("")
     public ModelAndView saleOpportunity(){
         ModelAndView mav = new ModelAndView("sale_opportunity");
-        mav.addObject("saleOpportunity", saleOpportunityRepository.findAll());
+        mav.addObject("saleOpportunities", saleOpportunityRepository.findAll());
         return mav;
     }
 

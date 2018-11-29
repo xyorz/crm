@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@RequestMapping(path = "/")
+@RequestMapping(path = "")
 public class CRMController {
 
     @RequestMapping(path = "")

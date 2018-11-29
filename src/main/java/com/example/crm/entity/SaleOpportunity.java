@@ -13,15 +13,15 @@ public class SaleOpportunity {
     private Boolean isDeclare;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "employeeId", referencedColumnName = "id")
+    @JoinColumn
     private Employee employee;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "productId", referencedColumnName = "id")
-    private List<Product> productList;
+    @JoinColumn(name = "saleOpportunityId")
+    private List<Product> products;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "Customer", referencedColumnName = "name")
+    @JoinColumn
     private Customer customer;
 
     @Column(nullable = false)
@@ -33,7 +33,7 @@ public class SaleOpportunity {
     public SaleOpportunity(Boolean isDeclare, Employee employee, List<Product> productList, Customer customer, String record) {
         this.isDeclare = isDeclare;
         this.employee = employee;
-        this.productList = productList;
+        this.products = productList;
         this.customer = customer;
         this.record = record;
     }
@@ -54,12 +54,12 @@ public class SaleOpportunity {
         isDeclare = declare;
     }
 
-    public List<Product> getProductList() {
-        return productList;
+    public List<Product> getProducts() {
+        return products;
     }
 
-    public void setProductList(List<Product> productList) {
-        this.productList = productList;
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     public Employee getEmployee() {

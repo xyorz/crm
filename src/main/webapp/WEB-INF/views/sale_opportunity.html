@@ -104,23 +104,26 @@ Version: 2.0
                                 </thead>
                                 <!--插入数据-->
                                 <tbody>
-                                <tr>
-                                    <td>
+                                <tr th:each="saleOpportunity : ${saleOpportunities}">
+                                    <td th:text="${saleOpportunity.getId()}">
                                         alex
                                     </td>
-                                    <td>
+                                    <td th:text="${saleOpportunity.getEmployee().getId()}">
                                         Alex Nilson
                                     </td>
-                                    <td>
-                                        1234
+                                    <td th:each="product : ${saleOpportunity.getProducts()}">
+                                        <span th:text="${product.getId()}">
+                                            1234
+                                        </span>
+
                                     </td>
-                                    <td class="center">
+                                    <td class="center" th:text="${saleOpportunity.getCustomer().getName()}">
                                         power user
                                     </td>
-                                    <td>
+                                    <td th:text="${saleOpportunity.getRecord()}">
                                         power user
                                     </td>
-                                    <td>
+                                    <td th:text="${saleOpportunity.getDeclare()}">
                                         1234
                                     </td>
                                     <td>

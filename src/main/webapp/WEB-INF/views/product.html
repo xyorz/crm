@@ -90,28 +90,28 @@ Version: 2.0
                                 </thead>
                                 <!--插入数据-->
                                 <tbody>
-                                <tr class="odd gradeX">
+                                <tr class="odd gradeX" th:each="product : ${products}">
                                     <td>
                                         <input type="checkbox" class="checkboxes" value="1"/>
                                     </td>
-                                    <td>
+                                    <td th:text="${product.getId()}">
                                         shuxer
                                     </td>
-                                    <td>
+                                    <td th:text="${product.getVariety()}">
                                         <a href="mailto:shuxer@gmail.com">
                                             shuxer@gmail.com </a>
                                     </td>
-                                    <td>
+                                    <td th:text="${product.getAmount()}">
                                         120
                                     </td>
-                                    <td class="center">
+                                    <td class="center" th:text="${product.getPrice()}">
                                         12 Jan 2012
                                     </td>
-                                    <td>
+                                    <td th:text="${product.getCost()}">
 									<span class="label label-sm label-success">
 									Approved </span>
                                     </td>
-                                    <td>
+                                    <td th:text="${product.getAnalysis()}">
 									<span class="label label-sm label-success">
 									Approved </span>
                                     </td>

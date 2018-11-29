@@ -13,7 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.*;
 
 @Controller
-@RequestMapping(path = "/employee")
+@RequestMapping(path = "employee")
 public class EmployeeController {
 
     @Autowired

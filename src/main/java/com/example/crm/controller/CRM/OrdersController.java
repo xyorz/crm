@@ -21,13 +21,16 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
-@RequestMapping(path = "/order")
+@RequestMapping(path = "order")
 public class OrdersController {
 
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
     private EmployeeRepository employeeRepository;
+    @Autowired
     private ProductRepository productRepository;
 
     @GetMapping("")

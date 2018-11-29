@@ -114,35 +114,35 @@ Version: 2.0
                                 </thead>
                                 <!--插入数据-->
                                 <tbody>
-                                <tr>
-                                    <td>
+                                <tr th:each="order : ${orders}">
+                                    <td th:text="${order.getId()}">
                                        alex
                                     </td>
-                                    <td>
+                                    <td th:text="${order.getCustomer().getId()}">
                                         Alex Nilson
                                     </td>
-                                    <td>
+                                    <td th:text="${order.getDate()}">
                                         1234
                                     </td>
-                                    <td class="center">
+                                    <td class="center" th:text="${order.getProduct().getName()}">
                                         power user
                                     </td>
-                                    <td>
+                                    <td th:text="${order.getValue()}">
                                         power user
-                                    </td>
-                                    <td>
+                                    </td >
+                                    <td th:text="${order.getPaidValue()}">
                                         Alex Nilson
                                     </td>
-                                    <td>
+                                    <td th:text="${order.getStatus()}">
                                         Alex Nilson
                                     </td>
-                                    <td>
+                                    <td th:text="${order.getStatus()}">
                                         Alex Nilson
                                     </td>
-                                    <td>
+                                    <td th:text="${order.getEmployee().getId()}">
                                         Alex Nilson
                                     </td>
-                                    <td>
+                                    <td th:text="${order.getStatus()}">
                                         Alex Nilson
                                     </td>
                                     <td>

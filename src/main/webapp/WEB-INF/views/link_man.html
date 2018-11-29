@@ -96,11 +96,11 @@ Version: 2.0
                                 </thead>
                                 <!--插入数据-->
                                 <tbody>
-                                <tr>
-                                    <td>
+                                <tr th:each="linkMan : ${linkMans}">
+                                    <td th:text="${linkMan.getName()}">
                                         alex
                                     </td>
-                                    <td>
+                                    <td th:text="${linkMan.getTel()}">
                                         Alex Nilson
                                     </td>
                                     <td>

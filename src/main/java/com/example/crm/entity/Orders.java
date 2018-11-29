@@ -10,15 +10,15 @@ public class Orders {
     private Integer id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "customerId", referencedColumnName = "id")
+    @JoinColumn
     private Customer customer;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "employeeId", referencedColumnName = "id")
+    @JoinColumn
     private Employee employee;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "productId", referencedColumnName = "id")
+    @JoinColumn
     private Product product;
 
     @Column(nullable = false)

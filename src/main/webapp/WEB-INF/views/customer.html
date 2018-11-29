@@ -101,20 +101,20 @@ Version: 2.0
                                 </thead>
                                 <!--插入数据-->
                                 <tbody>
-                                <tr>
+                                <tr th:each="customer : ${customers}">
                                     <td>
-                                        <a href="link_man.html">alex</a>
+                                        <a href="link_man.html" th:href="@{link_man/(customerId=${customer.getId()})}" th:text="${customer.getId()}">alex</a>
                                     </td>
-                                    <td>
+                                    <td th:text="${customer.getName()}">
                                         Alex Nilson
                                     </td>
-                                    <td>
+                                    <td th:text="${customer.getTel()}">
                                         1234
                                     </td>
-                                    <td class="center">
+                                    <td class="center" th:text="${customer.getAddress()}">
                                         power user
                                     </td>
-                                    <td>
+                                    <td th:text="${customer.getCredit()}">
                                         power user
                                     </td>
                                     <td>

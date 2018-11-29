@@ -1,6 +1,7 @@
 package com.example.crm.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Customer {
@@ -10,6 +11,10 @@ public class Customer {
 
     @Column(nullable = false)
     private String name;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn
+    private List<LinkMan> linkMen;
 
     @Column(nullable = false)
     private String tel;
@@ -34,6 +39,15 @@ public class Customer {
         this.credit = credit;
     }
 
+    public Customer(String name, List<LinkMan> linkMen, String tel, String address, String text, Integer credit) {
+        this.name = name;
+        this.linkMen = linkMen;
+        this.tel = tel;
+        this.address = address;
+        this.text = text;
+        this.credit = credit;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -48,6 +62,14 @@ public class Customer {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<LinkMan> getLinkMen() {
+        return linkMen;
+    }
+
+    public void setLinkMen(List<LinkMan> linkMen) {
+        this.linkMen = linkMen;
     }
 
     public String getTel() {

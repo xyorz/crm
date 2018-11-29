@@ -13,7 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.*;
 
 @Controller
-@RequestMapping(path = "/customer")
+@RequestMapping(path = "customer")
 public class CustomerController {
 
     @Autowired

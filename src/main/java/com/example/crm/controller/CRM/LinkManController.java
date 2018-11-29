@@ -15,33 +15,37 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.*;
 
 @Controller
-@RequestMapping(path = "/link_man")
+@RequestMapping(path = "link_man")
 public class LinkManController {
 
     @Autowired
     private LinkManRepository linkManRepository;
+    @Autowired
     private CustomerRepository customerRepository;
 
     @GetMapping("")
-    public ModelAndView linkMans(){
-        ModelAndView mav = new ModelAndView("linkMan");
-        mav.addObject("linkMans", linkManRepository.findAll());
+    public ModelAndView linkMen(@RequestParam Integer customerId){
+        Optional<Customer> customerOptional = customerRepository.findById(customerId);
+        ModelAndView mav = new ModelAndView("link_man");
+        if(customerOptional.isPresent()){
+            Customer customer = customerOptional.get();
+            List<LinkMan> linkMen = customer.getLinkMen();
+            mav.addObject("linkMans", linkMen);
+            return mav;
+        }
         return mav;
     }
 
     @PostMapping(path = "")
     public ModelAndView addLinkMan(@RequestParam String name, @RequestParam String tel, @RequestParam Integer customerId) {
-        Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
-        if(optionalCustomer.isPresent()){
-            Customer customer = optionalCustomer.get();
-            LinkMan linkMan = new LinkMan(name, customer, tel);
-            linkManRepository.save(linkMan);
-        }
-        return linkMans();
+        LinkMan linkMan = new LinkMan(name, tel);
+        linkManRepository.save(linkMan);
+        return linkMen(customerId);
     }
 
     @PostMapping(path = "update")
-    public ModelAndView update(@RequestParam Integer id, @RequestParam String name, @RequestParam String tel) {
+    public ModelAndView update(@RequestParam Integer id, @RequestParam String name, @RequestParam String tel,
+                               @RequestParam Integer customerId) {
         Optional<LinkMan> optionalLinkMan = linkManRepository.findById(id);
         if(optionalLinkMan.isPresent()){
             LinkMan linkMan = optionalLinkMan.get();
@@ -49,6 +53,6 @@ public class LinkManController {
             linkMan.setTel(tel);
             linkManRepository.save(linkMan);
         }
-        return linkMans();
+        return linkMen(customerId);
     }
 }
