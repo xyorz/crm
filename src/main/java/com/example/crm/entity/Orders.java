@@ -9,6 +9,18 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn
+    private Customer customer;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn
+    private Employee employee;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn
+    private Product product;
+
     @Column(nullable = false)
     private String status;
 
@@ -24,18 +36,19 @@ public class Orders {
     @Column(nullable = false)
     private String variety;
 
-    @Column(nullable = false)
-    private Employee employee;
+    public Orders() {
+    }
 
-    @Column(nullable = false)
-    private Boolean billStatus;
-
-    @Column(nullable = false)
-    private Customer customer;
-
-    @Column(nullable = false)
-    private String aftersaleRecord;
-
+    public Orders(Customer customer, Employee employee, Product product, String status, Date date, float value, float paidValue, String variety) {
+        this.customer = customer;
+        this.employee = employee;
+        this.product = product;
+        this.status = status;
+        this.date = date;
+        this.value = value;
+        this.paidValue = paidValue;
+        this.variety = variety;
+    }
 
     public Integer getId() {
         return id;
@@ -43,6 +56,30 @@ public class Orders {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public String getStatus() {
@@ -83,37 +120,5 @@ public class Orders {
 
     public void setVariety(String variety) {
         this.variety = variety;
-    }
-
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public Boolean getBillStatus() {
-        return billStatus;
-    }
-
-    public void setBillStatus(Boolean billStatus) {
-        this.billStatus = billStatus;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public String getAftersaleRecord() {
-        return aftersaleRecord;
-    }
-
-    public void setAftersaleRecord(String aftersaleRecord) {
-        this.aftersaleRecord = aftersaleRecord;
     }
 }

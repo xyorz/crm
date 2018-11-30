@@ -9,6 +9,9 @@ public class Product {
     private Integer id;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private String variety;
 
     @Column(nullable = false)
@@ -22,6 +25,26 @@ public class Product {
 
     @Column(nullable = false)
     private String analysis;
+
+    public Product() {
+    }
+
+    public Product(String name, String variety, Integer amount, float cost, float price, String analysis) {
+        this.name = name;
+        this.variety = variety;
+        this.amount = amount;
+        this.cost = cost;
+        this.price = price;
+        this.analysis = analysis;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Integer getId() {
         return id;

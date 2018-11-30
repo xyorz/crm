@@ -11,12 +11,16 @@ public class LinkMan {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "customerId", referencedColumnName = "id")
-    private Customer customer;
-
     @Column(nullable = false)
     private String tel;
+
+    public LinkMan() {
+    }
+
+    public LinkMan(String name, String tel) {
+        this.name = name;
+        this.tel = tel;
+    }
 
     public Integer getId() {
         return id;
@@ -32,14 +36,6 @@ public class LinkMan {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
     }
 
     public String getTel() {

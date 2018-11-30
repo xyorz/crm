@@ -9,20 +9,34 @@ public class SaleOpportunity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(nullable = false)
+    private Boolean isDeclare;
+
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "employeeId", referencedColumnName = "id")
+    @JoinColumn
     private Employee employee;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "productId", referencedColumnName = "id")
-    private List<Product> productList;
+    @JoinColumn(name = "saleOpportunityId")
+    private List<Product> products;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "linkManName", referencedColumnName = "name")
-    private LinkMan linkMan;
+    @JoinColumn
+    private Customer customer;
 
     @Column(nullable = false)
     private String record;
+
+    public SaleOpportunity() {
+    }
+
+    public SaleOpportunity(Boolean isDeclare, Employee employee, List<Product> productList, Customer customer, String record) {
+        this.isDeclare = isDeclare;
+        this.employee = employee;
+        this.products = productList;
+        this.customer = customer;
+        this.record = record;
+    }
 
     public Integer getId() {
         return id;
@@ -32,12 +46,20 @@ public class SaleOpportunity {
         this.id = id;
     }
 
-    public List<Product> getProductList() {
-        return productList;
+    public Boolean getDeclare() {
+        return isDeclare;
     }
 
-    public void setProductList(List<Product> productList) {
-        this.productList = productList;
+    public void setDeclare(Boolean declare) {
+        isDeclare = declare;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     public Employee getEmployee() {
@@ -48,12 +70,12 @@ public class SaleOpportunity {
         this.employee = employee;
     }
 
-    public LinkMan getLinkMan() {
-        return linkMan;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setLinkMan(LinkMan linkMan) {
-        this.linkMan = linkMan;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public String getRecord() {
