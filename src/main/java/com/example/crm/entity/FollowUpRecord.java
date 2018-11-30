@@ -18,6 +18,9 @@ public class FollowUpRecord {
 
     private String record;
 
+    @Column(nullable = false)
+    private Boolean isDeclare;
+
     public Employee getEmployee() {
         return employee;
     }
@@ -40,5 +43,21 @@ public class FollowUpRecord {
 
     public void setRecord(String record) {
         this.record = record;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Boolean getDeclare() {
+        return isDeclare;
+    }
+
+    public void setDeclare(Boolean declare) {
+        isDeclare = declare;
     }
 }
