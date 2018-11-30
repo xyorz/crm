@@ -21,6 +21,15 @@ public class FollowUpRecord {
     @Column(nullable = false)
     private Boolean isDeclare;
 
+    public FollowUpRecord(){}
+
+    public FollowUpRecord(Employee employee, Customer customer, String record, Boolean isDeclare) {
+        this.employee = employee;
+        this.customer = customer;
+        this.record = record;
+        this.isDeclare = isDeclare;
+    }
+
     public Employee getEmployee() {
         return employee;
     }
