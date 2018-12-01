@@ -111,13 +111,10 @@ Version: 2.0
                                     <td th:text="${saleOpportunity.getEmployee().getId()}">
                                         Alex Nilson
                                     </td>
-                                    <td th:each="product : ${saleOpportunity.getProducts()}">
-                                        <span th:text="${product.getId()}">
-                                            1234
-                                        </span>
-
+                                    <td>
+                                        <span th:each="product : ${saleOpportunity.getProducts()}" th:remove="tag"><span th:text="${product.getId()}+' '" th:remove="tag"></span></span>
                                     </td>
-                                    <td class="center" th:text="${saleOpportunity.getCustomer().getName()}">
+                                    <td class="center" th:text="${saleOpportunity.getCustomer().getName()}" th:id="'cus_'+${saleOpportunity.getCustomer().getId()}">
                                         power user
                                     </td>
                                     <td th:text="${saleOpportunity.getRecord()}">

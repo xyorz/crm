@@ -2,12 +2,12 @@ package com.example.crm.controller.CRM;
 
 import com.example.crm.entity.Customer;
 import com.example.crm.repository.CustomerRepository;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
@@ -27,24 +27,50 @@ public class CustomerController {
     }
 
     @PostMapping(path = "")
-    public ModelAndView addCustomer(@RequestParam String name, @RequestParam String tel, @RequestParam String address, @RequestParam Integer credit, @RequestParam String text) {
-        Customer customer = new Customer(name, tel, address, text, credit);
+    public ResponseEntity<Map<String, String>> add(@RequestBody Customer customer) {
         customerRepository.save(customer);
-        return customers();
+
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "success");
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     @PostMapping(path = "update")
-    public ModelAndView update(@RequestParam Integer id, @RequestParam String name, @RequestParam String tel, @RequestParam String address, @RequestParam Integer credit, @RequestParam String text) {
-        Optional<Customer> optionalCustomer = customerRepository.findById(id);
+    public ResponseEntity<Map<String, String>> update(@RequestBody Customer customer) {
+        Optional<Customer> optionalCustomer = customerRepository.findById(customer.getId());
         if(optionalCustomer.isPresent()){
-            Customer customer = optionalCustomer.get();
-            customer.setName(name);
-            customer.setTel(tel);
-            customer.setAddress(address);
-            customer.setCredit(credit);
-            customer.setText(text);
-            customerRepository.save(customer);
+            Customer cus = optionalCustomer.get();
+            cus.setName(customer.getName());
+            cus.setTel(customer.getTel());
+            cus.setAddress(customer.getAddress());
+            cus.setCredit(customer.getCredit());
+            cus.setText(customer.getText());
+            customerRepository.save(cus);
+
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "success");
+            return new ResponseEntity<>(map, HttpStatus.OK);
         }
-        return customers();
+
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "customer did not exist");
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
     }
+
+    @PostMapping(path = "delete")
+    public ResponseEntity<Map<String, String>> delete(@RequestBody JSONObject jsonObject) {
+        Optional<Customer> optionalCustomer = customerRepository.findById(jsonObject.getInt("id"));
+        if(optionalCustomer.isPresent()){
+            customerRepository.delete(optionalCustomer.get());
+
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "success");
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        }
+
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "customer did not exist");
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+    }
+
 }

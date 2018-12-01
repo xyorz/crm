@@ -77,9 +77,13 @@ Version: 2.0
                                     </div>
                                 </div>
                             </div>
+                            <input type="hidden" th:value="${customerId}" th:id="customer_id">
                             <table class="table table-striped table-hover table-bordered" id="sample_editable_1">
                                 <thead>
                                 <tr>
+                                    <th>
+                                        联系人编号
+                                    </th>
                                     <th>
                                         联系人名称
                                     </th>
@@ -97,6 +101,9 @@ Version: 2.0
                                 <!--插入数据-->
                                 <tbody>
                                 <tr th:each="linkMan : ${linkMans}">
+                                    <td th:text="${linkMan.getId()}">
+                                        id
+                                    </td>
                                     <td th:text="${linkMan.getName()}">
                                         alex
                                     </td>

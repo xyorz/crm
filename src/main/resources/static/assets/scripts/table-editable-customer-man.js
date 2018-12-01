@@ -16,18 +16,28 @@ var TableEditable = function () {
         function editRow(oTable, nRow) {
             var aData = oTable.fnGetData(nRow);
             var jqTds = $('>td', nRow);
-            jqTds[0].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[0] + '">';
+            // jqTds[0].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[0] + '">';
             jqTds[1].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[1] + '">';
-            jqTds[2].innerHTML = '<a class="edit" href="">保存</a>';
-            jqTds[3].innerHTML = '<a class="cancel" href="">放弃</a>';
+            jqTds[2].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[2] + '">';
+            jqTds[3].innerHTML = '<a class="edit" href="">保存</a>';
+            jqTds[4].innerHTML = '<a class="cancel" href="">放弃</a>';
         }
 
         function saveRow(oTable, nRow) {
             var jqInputs = $('input', nRow);
-            oTable.fnUpdate(jqInputs[0].value, nRow, 0, false);
-            oTable.fnUpdate(jqInputs[1].value, nRow, 1, false);
-            oTable.fnUpdate('<a class="edit" href="">编辑</a>', nRow, 2, false);
-            oTable.fnUpdate('<a class="delete" href="">删除</a>', nRow, 3, false);
+            if(jqInputs[2]!=null)
+            {
+                oTable.fnUpdate(jqInputs[0].value, nRow, 0, false);
+                oTable.fnUpdate(jqInputs[1].value, nRow, 1, false);
+                oTable.fnUpdate(jqInputs[2].value, nRow, 2, false);
+            }
+            else
+            {
+                oTable.fnUpdate(jqInputs[0].value, nRow, 1, false);
+                oTable.fnUpdate(jqInputs[1].value, nRow, 2, false);
+            }
+            oTable.fnUpdate('<a class="edit" href="">编辑</a>', nRow, 3, false);
+            oTable.fnUpdate('<a class="delete" href="">删除</a>', nRow, 4, false);
             oTable.fnDraw();
         }
 
@@ -35,9 +45,40 @@ var TableEditable = function () {
             var jqInputs = $('input', nRow);
             oTable.fnUpdate(jqInputs[0].value, nRow, 0, false);
             oTable.fnUpdate(jqInputs[1].value, nRow, 1, false);
-            oTable.fnUpdate('<a class="edit" href="">编辑</a>', nRow, 2, false);
+            oTable.fnUpdate(jqInputs[2].value, nRow, 2, false);
+            oTable.fnUpdate('<a class="edit" href="">编辑</a>', nRow, 3, false);
             oTable.fnDraw();
         }
+
+        function gatherRowData(nRow){
+            var jqInputs = $('input', nRow);
+            var c0V = $(nRow).children("td").eq(0).text();
+            if(c0V === ""||c0V===null) action_type = "add";
+            var c1V = jqInputs[0].value;
+            var c2V = jqInputs[1].value;
+            var customer_id = $("#customer_id").attr("value");
+            return {"id": c0V, "name": c1V, "tel": c2V, "customer_id": customer_id};
+        }
+
+        function ajaxUpload(url, method, data) {
+            $.ajax({
+                type: method,
+                url: url,
+                data: JSON.stringify(data),
+                async: false,
+                contentType:"application/json",
+                success: function(result){
+                    alert(result.message);
+                    location.reload();
+                },
+                error: function (result) {
+                    alert(result.responseText);
+                    location.reload();
+                }
+            })
+        }
+
+        var action_type = null;
 
         var table = $('#sample_editable_1');
 
@@ -92,7 +133,7 @@ var TableEditable = function () {
                 }
             }
 
-            var aiNew = oTable.fnAddData(['', '','', '']);
+            var aiNew = oTable.fnAddData(['', '','', '','']);
             var nRow = oTable.fnGetNodes(aiNew[0]);
             editRow(oTable, nRow);
             nEditing = nRow;
@@ -106,9 +147,17 @@ var TableEditable = function () {
                 return;
             }
 
+            var delId = 0;
+            try{
+                delId = $(this).parent().parent().children('td').eq(0).text();
+            }catch (e) {
+                delId = 0;
+            }
+
+            ajaxUpload("link_nam/delete", "POST", {"id": delId});
+
             var nRow = $(this).parents('tr')[0];
             oTable.fnDeleteRow(nRow);
-            alert("客户信息已删除完成");
         });
 
         table.on('click', '.cancel', function (e) {
@@ -131,14 +180,19 @@ var TableEditable = function () {
 
             if (nEditing !== null && nEditing != nRow) {
                 /* Currently editing - but not this row - restore the old before continuing to edit mode */
+
                 restoreRow(oTable, nEditing);
                 editRow(oTable, nRow);
                 nEditing = nRow;
             } else if (nEditing == nRow && this.innerHTML == "保存") {
                 /* Editing this row and want to save it */
+                var data = gatherRowData(nEditing);
+                var url = null;
+                if(action_type==="add") url = "link_man";
+                else url = "link_man/update";
+                ajaxUpload(url, "POST", data);
                 saveRow(oTable, nEditing);
                 nEditing = null;
-                alert("更新完毕");
             } else {
                 /* No edit in progress - let's start one */
                 editRow(oTable, nRow);

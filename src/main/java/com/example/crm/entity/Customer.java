@@ -12,7 +12,7 @@ public class Customer {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "customer_id")
     private List<LinkMan> linkMen;
 

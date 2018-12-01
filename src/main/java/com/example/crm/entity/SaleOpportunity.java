@@ -12,15 +12,15 @@ public class SaleOpportunity {
     @Column(nullable = false)
     private Boolean isDeclare;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn
     private Employee employee;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.DETACH)
     @JoinColumn(name = "saleOpportunityId")
     private List<Product> products;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.DETACH)
     @JoinColumn
     private Customer customer;
 

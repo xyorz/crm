@@ -1,13 +1,11 @@
 package com.example.crm.controller.CRM;
 
+import com.example.crm.entity.Customer;
 import com.example.crm.entity.Employee;
 import com.example.crm.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
@@ -27,22 +25,21 @@ public class EmployeeController {
     }
 
     @PostMapping(path = "")
-    public ModelAndView addEmployee(@RequestParam String name, @RequestParam String tel, @RequestParam String password, @RequestParam boolean sex, @RequestParam boolean empty, @RequestParam String remark) {
-        Employee employee = new Employee(name, sex, tel, password, empty, remark);
+    public ModelAndView addEmployee(@RequestBody Employee employee) {
         employeeRepository.save(employee);
         return employees();
     }
 
     @PostMapping(path = "update")
-    public ModelAndView update(@RequestParam Integer id, @RequestParam String name, @RequestParam String tel, @RequestParam boolean sex, @RequestParam boolean empty, @RequestParam String remark) {
-        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
+    public ModelAndView update(@RequestBody Employee employee) {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(employee.getId());
         if(optionalEmployee.isPresent()){
-            Employee employee = optionalEmployee.get();
-            employee.setName(name);
-            employee.setTel(tel);
-            employee.setSex(sex);
-            employee.setRemark(remark);
-            employee.setEmpty(empty);
+            Employee emp = optionalEmployee.get();
+            emp.setName(employee.getName());
+            emp.setTel(emp.getTel());
+            emp.setSex(emp.getSex());
+            emp.setRemark(emp.getRemark());
+            emp.setEmpty(employee.getEmpty());
             employeeRepository.save(employee);
         }
         return employees();

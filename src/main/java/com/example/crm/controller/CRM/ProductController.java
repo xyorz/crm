@@ -6,10 +6,7 @@ import com.example.crm.repository.CustomerRepository;
 import com.example.crm.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
@@ -29,26 +26,22 @@ public class ProductController {
     }
 
     @PostMapping(path = "")
-    public ModelAndView addProduct(@RequestParam String name, @RequestParam String variety, @RequestParam Integer amount,
-                                   @RequestParam float price, @RequestParam float cost, @RequestParam String analysis) {
-        Product product = new Product(name, variety, amount, cost, price, analysis);
+    public ModelAndView addProduct(@RequestBody Product product) {
         productRepository.save(product);
         return products();
     }
 
     @PostMapping(path = "update")
-    public ModelAndView update(@RequestParam String name, @RequestParam Integer id, @RequestParam String variety,
-                               @RequestParam Integer amount, @RequestParam float price, @RequestParam float cost,
-                               @RequestParam String analysis) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
+    public ModelAndView update(@RequestBody Product product) {
+        Optional<Product> optionalProduct = productRepository.findById(product.getId());
         if(optionalProduct.isPresent()){
-            Product product = optionalProduct.get();
-            product.setName(name);
-            product.setVariety(variety);
-            product.setAmount(amount);
-            product.setPrice(price);
-            product.setCost(cost);
-            product.setAnalysis(analysis);
+            Product prod = optionalProduct.get();
+            prod.setName(product.getName());
+            prod.setVariety(product.getVariety());
+            prod.setAmount(product.getAmount());
+            prod.setPrice(product.getPrice());
+            prod.setCost(product.getCost());
+            prod.setAnalysis(product.getAnalysis());
             productRepository.save(product);
         }
         return products();

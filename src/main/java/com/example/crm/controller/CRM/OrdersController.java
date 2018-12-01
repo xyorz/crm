@@ -8,12 +8,12 @@ import com.example.crm.repository.CustomerRepository;
 import com.example.crm.repository.EmployeeRepository;
 import com.example.crm.repository.OrderRepository;
 import com.example.crm.repository.ProductRepository;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.text.ParseException;
@@ -41,29 +41,76 @@ public class OrdersController {
     }
 
     @PostMapping(path = "")
-    public ModelAndView addOrders(@RequestParam Integer customerId, @RequestParam Integer employeeId, @RequestParam Integer productId,
-                                  @RequestParam String date, @RequestParam float value, @RequestParam float paidValue,
-                                  @RequestParam String variety, @RequestParam String status) {
-        Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
-        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
-        Optional<Product> optionalProduct = productRepository.findById(productId);
+    public ResponseEntity<Map<String, String>> add(@RequestBody JSONObject jsonObject) {
+        Optional<Customer> optionalCustomer = customerRepository.findById(jsonObject.getInt("customerId"));
+        Optional<Employee> optionalEmployee = employeeRepository.findById(jsonObject.getInt("employeeId"));
+        Optional<Product> optionalProduct = productRepository.getByName(jsonObject.getString("productName"));
         if(optionalCustomer.isPresent()&&optionalEmployee.isPresent()&&optionalProduct.isPresent()){
             Customer customer = optionalCustomer.get();
             Employee employee = optionalEmployee.get();
             Product product = optionalProduct.get();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            try{
-                Date d = sdf.parse(date);
-                Orders order = new Orders(customer, employee, product, status, d, value, paidValue, variety);
-                orderRepository.save(order);
-            } catch (ParseException e){
-                e.printStackTrace();
-            }
-            finally {
-                return orders();
-            }
+            Orders order = new Orders(customer, employee, product, jsonObject.getString("status"), new Date(),
+                    Float.parseFloat((String) jsonObject.get("paidValue")), Float.parseFloat((String) jsonObject.get("paidValue")),
+                    jsonObject.getString("variety"));
+            orderRepository.save(order);
+
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "success");
+            return new ResponseEntity<>(map, HttpStatus.OK);
         }
-        return orders();
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "customer or employee or product do not exist");
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
     }
 
+    @PostMapping(path = "update")
+    public ResponseEntity<Map<String, String>> update(@RequestBody JSONObject jsonObject) {
+        Optional<Orders> optionalSaleOpportunity = orderRepository.findById(jsonObject.getInt("id"));
+        if (optionalSaleOpportunity.isPresent()) {
+            Orders order = optionalSaleOpportunity.get();
+            Optional<Customer> optionalCustomer = customerRepository.findById(jsonObject.getInt("customerId"));
+            Optional<Employee> optionalEmployee = employeeRepository.findById(jsonObject.getInt("employeeId"));
+            Optional<Product> optionalProduct = productRepository.getByName(jsonObject.getString("productName"));
+            if (optionalCustomer.isPresent() && optionalEmployee.isPresent() && optionalProduct.isPresent()) {
+                Customer customer = optionalCustomer.get();
+                Employee employee = optionalEmployee.get();
+                Product product = optionalProduct.get();
+                order.setCustomer(customer);
+                order.setEmployee(employee);
+                order.setProduct(product);
+                order.setDate(new Date());
+                order.setPaidValue(Float.parseFloat((String) jsonObject.get("paidValue")));
+                order.setValue(Float.parseFloat((String) jsonObject.get("paidValue")));
+                order.setStatus(jsonObject.getString("status"));
+                order.setVariety(jsonObject.getString("variety"));
+                orderRepository.save(order);
+
+                Map<String, String> map = new HashMap<>();
+                map.put("message", "success");
+                return new ResponseEntity<>(map, HttpStatus.OK);
+            }
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "customer or employee or product did not exist");
+            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        }
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "order did not exist");
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping(path = "delete")
+    public ResponseEntity<Map<String, String>> delete(@RequestBody JSONObject jsonObject) {
+        Optional<Orders> optionalOrders = orderRepository.findById(jsonObject.getInt("id"));
+        if(optionalOrders.isPresent()){
+            orderRepository.delete(optionalOrders.get());
+
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "success");
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        }
+
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "orders did not exist");
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+    }
 }

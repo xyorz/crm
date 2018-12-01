@@ -103,7 +103,7 @@ Version: 2.0
                                 <tbody>
                                 <tr th:each="customer : ${customers}">
                                     <td>
-                                        <a href="link_man.html" th:href="@{link_man(customerId=${customer.getId()})}" th:text="${customer.getId()}">alex</a>
+                                        <a href="link_man.html" th:id="'td_'+${customer.getId()}" th:href="@{link_man(customerId=${customer.getId()})}" th:text="${customer.getId()}">alex</a>
                                     </td>
                                     <td th:text="${customer.getName()}">
                                         Alex Nilson

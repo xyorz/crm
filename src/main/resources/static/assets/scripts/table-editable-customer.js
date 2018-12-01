@@ -15,7 +15,6 @@ var TableEditable = function () {
         function editRow1(oTable, nRow) {
             var aData = oTable.fnGetData(nRow);
             var jqTds = $('>td', nRow);
-            jqTds[0].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[0] + '">';
             jqTds[1].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[1] + '">';
             jqTds[2].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[2] + '">';
             jqTds[3].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[3] + '">';
@@ -68,7 +67,39 @@ var TableEditable = function () {
             oTable.fnDraw();
         }
 
+        function gatherRowData(nRow){
+            var jqInputs = $('input', nRow);
+            var c0V = $(nRow).children("td").eq(0).text();
+            if(c0V === ""||c0V===null) action_type = "add";
+            else action_type = "update";
+            var c1V = jqInputs[0].value;
+            var c2V = jqInputs[1].value;
+            var c3V = jqInputs[2].value;
+            var c4V = jqInputs[3].value;
+            return {"id": c0V, "name": c1V, "tel": c2V, "address": c3V, "credit": c4V, "text": " "};
+        }
+
+        function ajaxUpload(url, method, data) {
+            $.ajax({
+                type: method,
+                url: url,
+                data: JSON.stringify(data),
+                async: false,
+                contentType:"application/json",
+                success: function(result){
+                    alert(result.message);
+                    location.reload();
+                },
+                error: function (result) {
+                    alert(result.responseText);
+                    location.reload();
+                }
+            })
+        }
+
         var table = $('#sample_editable_1');
+
+        var action_type = null;
 
         var oTable = table.dataTable({
             "lengthMenu": [
@@ -104,11 +135,11 @@ var TableEditable = function () {
 
         $('#sample_editable_1_new').click(function (e) {
             e.preventDefault();
-
-            if (nNew && nEditing) {
+            console.log(nNew === true);
+            console.log(nEditing === null);
+            if (nEditing) {
                 if (confirm("存在数据没有保存，是否保存？")) {
                     saveRow(oTable, nEditing); // save
-                    $(nEditing).find("td:first").html("Untitled");
                     nEditing = null;
                     nNew = false;
 
@@ -116,7 +147,6 @@ var TableEditable = function () {
                     oTable.fnDeleteRow(nEditing); // cancel
                     nEditing = null;
                     nNew = false;
-
                     return;
                 }
             }
@@ -136,8 +166,18 @@ var TableEditable = function () {
             }
 
             var nRow = $(this).parents('tr')[0];
+
+
+            var delId = 0;
+            try{
+                delId = $(this).parent().parent().children('td').eq(0).text();
+            }catch (e) {
+                delId = 0;
+            }
+
+            ajaxUpload("customer/delete", "POST", {"id": delId});
+
             oTable.fnDeleteRow(nRow);
-            alert("客户信息已删除完成");
         });
 
         table.on('click', '.cancel', function (e) {
@@ -158,16 +198,20 @@ var TableEditable = function () {
             /* Get the row as a parent of the link that was clicked on */
             var nRow = $(this).parents('tr')[0];
 
-            if (nEditing !== null && nEditing != nRow) {
+            if (nEditing !== null && nEditing !== nRow) {
                 /* Currently editing - but not this row - restore the old before continuing to edit mode */
                 restoreRow(oTable, nEditing);
                 editRow(oTable, nRow);
                 nEditing = nRow;
-            } else if (nEditing == nRow && this.innerHTML == "保存") {
+            } else if (nEditing === nRow && this.innerHTML === "保存") {
                 /* Editing this row and want to save it */
+                var data = gatherRowData(nEditing);
+                var url = null;
+                if(action_type==="add") url = "customer";
+                else url = "customer/update";
+                ajaxUpload(url, "POST", data);
                 saveRow(oTable, nEditing);
                 nEditing = null;
-                alert("更新完毕");
             } else {
                 /* No edit in progress - let's start one */
                 editRow(oTable, nRow);

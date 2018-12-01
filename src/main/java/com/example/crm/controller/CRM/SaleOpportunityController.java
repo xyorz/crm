@@ -5,15 +5,18 @@ import com.example.crm.entity.Employee;
 import com.example.crm.entity.SaleOpportunity;
 import com.example.crm.entity.Product;
 import com.example.crm.repository.*;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
+
+import static java.util.Arrays.asList;
 
 @Controller
 @RequestMapping(path = "sale_opportunity")
@@ -36,24 +39,95 @@ public class SaleOpportunityController {
     }
 
     @PostMapping(path = "")
-    public ModelAndView addSaleOpportunity(@RequestParam Integer customerId, @RequestParam Integer employeeId,
-                                           @RequestParam(value = "product_ids") Integer[] productIds,
-                                           @RequestParam String record, @RequestParam boolean isDeclare) {
-        Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
-        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
-        Iterable<Product> productIt = productRepository.findAllById(Arrays.asList(productIds));
+    public ResponseEntity<Map<String ,String>>  add(@RequestBody JSONObject jsonObject) {
         List<Product> products = new ArrayList<>();
-        while(productIt.iterator().hasNext()){
-            Product p = productIt.iterator().next();
-            products.add(p);
+        Optional<Customer> optionalCustomer = customerRepository.findByName(jsonObject.getString("customerName"));
+        Optional<Employee> optionalEmployee = employeeRepository.findById(jsonObject.getInt("employeeId"));
+        List<Object> productIdObj = Arrays.asList(jsonObject.getJSONArray("productIds").toArray());
+        List<Integer> productIds = new ArrayList<>();
+        for(Object obj : productIdObj)
+            productIds.add(Integer.parseInt((String) obj));
+        for (Integer id : productIds){
+            Optional<Product> optionalProduct = productRepository.findById(id);
+            if(!optionalProduct.isPresent()){
+                Map<String, String> map = new HashMap<>();
+                map.put("message", "product id=" + id + " do not exist");
+                return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+            }
+            products.add(optionalProduct.get());
         }
-        if(optionalCustomer.isPresent()&&optionalEmployee.isPresent()){
+        if(optionalCustomer.isPresent() && optionalEmployee.isPresent()){
             Customer customer = optionalCustomer.get();
             Employee employee = optionalEmployee.get();
-            SaleOpportunity saleOpportunity = new SaleOpportunity(isDeclare, employee, products, customer, record);
-            saleOpportunityRepository.save(saleOpportunity);
+            saleOpportunityRepository.save(new SaleOpportunity(jsonObject.getBoolean("isDeclare"),
+                    employee, products, customer, jsonObject.getString("record")));
+
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "success");
+            return new ResponseEntity<>(map, HttpStatus.OK);
         }
-        return saleOpportunity();
+        Map<String, String> map = new HashMap<>();
+        map.put("message",  "customer or employee do not exist");
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
     }
 
+    @PostMapping(path = "update")
+    public ResponseEntity<Map<String ,String>> update(@RequestBody JSONObject jsonObject) {
+        Optional<SaleOpportunity> optionalSaleOpportunity = saleOpportunityRepository.findById(jsonObject.getInt("id"));
+        if (optionalSaleOpportunity.isPresent()) {
+            SaleOpportunity saleOpportunity = optionalSaleOpportunity.get();
+            List<Product> products = new ArrayList<>();
+            Optional<Customer> optionalCustomer = customerRepository.findByName(jsonObject.getString("customerName"));
+            Optional<Employee> optionalEmployee = employeeRepository.findById(jsonObject.getInt("employeeId"));
+            List<Object> productIdObj = Arrays.asList(jsonObject.getJSONArray("productIds").toArray());
+            List<Integer> productIds = new ArrayList<>();
+            for(Object obj : productIdObj)
+                productIds.add(Integer.parseInt((String) obj));
+            for (Integer id : productIds){
+                Optional<Product> optionalProduct = productRepository.findById(id);
+                if(!optionalProduct.isPresent()){
+                    Map<String, String> map = new HashMap<>();
+                    map.put("message", "product id=" + id + " do not exist");
+                    return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+                }
+                products.add(optionalProduct.get());
+            }
+            if (optionalCustomer.isPresent() && optionalEmployee.isPresent()) {
+                Customer customer = optionalCustomer.get();
+                Employee employee = optionalEmployee.get();
+                saleOpportunity.setCustomer(customer);
+                saleOpportunity.setEmployee(employee);
+                saleOpportunity.setDeclare(jsonObject.getBoolean("isDeclare"));
+                saleOpportunity.setProducts(products);
+                saleOpportunity.setRecord(jsonObject.getString("record"));
+                saleOpportunityRepository.save(saleOpportunity);
+
+                Map<String, String> map = new HashMap<>();
+                map.put("message", "success");
+                return new ResponseEntity<>(map, HttpStatus.OK);
+            }
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "customer or employee do not exist");
+            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        }
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "saleOpportunity did not exist");
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping(path = "delete")
+    public ResponseEntity<Map<String, String>> delete(@RequestBody JSONObject jsonObject) {
+        Optional<SaleOpportunity> optionalSaleOpportunity = saleOpportunityRepository.findById(jsonObject.getInt("id"));
+        if(optionalSaleOpportunity.isPresent()){
+            saleOpportunityRepository.delete(optionalSaleOpportunity.get());
+
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "success");
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        }
+
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "saleOpportunity did not exist");
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+    }
 }
