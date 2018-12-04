@@ -13,7 +13,7 @@ Version: 2.0
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
 <!--[if !IE]><!-->
-<html lang="en" class="no-js">
+<html lang="en" class="no-js" xmlns:th="http://www.thymeleaf.org">
 <!--<![endif]-->
 <!-- BEGIN HEAD -->
 <head>
@@ -57,7 +57,7 @@ Version: 2.0
 <!-- BEGIN LOGIN -->
 <div class="content">
 	<!-- BEGIN LOGIN FORM -->
-	<form class="login-form" action="/login" method="post">
+	<form class="login-form" action="/index" method="post">
 		<h3 class="form-title">登录账号</h3>
 		<div class="alert alert-danger display-hide">
 			<button class="close" data-close="alert"></button>
@@ -85,6 +85,7 @@ Version: 2.0
 			<button type="submit" class="btn btn-info pull-right">
 			登录 </button>
 		</div>
+		<h3 th:text="${errorInfo}"></h3>
 	</form>
 	<!-- END LOGIN FORM -->
 </div>

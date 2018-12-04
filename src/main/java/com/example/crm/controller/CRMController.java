@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
@@ -33,15 +34,20 @@ public class CRMController {
         return "login";
     }
 
-    @PostMapping("/login")
-    public String loginVerify(String username, String password, HttpSession session){
+    @PostMapping("/index")
+    public ModelAndView loginVerify(String username, String password, HttpSession session){
 
-        Optional<Employee> optionalEmployee = Optional.of(employeeRepository.findByIdAndPassword(Integer.valueOf(username),password));
-        if (optionalEmployee.isPresent()){
+//        Optional<Employee> optionalEmployee = Optional.of(employeeRepository.findByIdAndPassword(Integer.valueOf(username),password));
+        Employee employee = employeeRepository.findByIdAndPassword(Integer.valueOf(username),password);
+        ModelAndView mav = new ModelAndView();
+        if (employee != null){
             session.setAttribute(WebSecurityConfig.SESSION_KEY, username);
-            return "index";
+            mav.setViewName("index");
+            return mav;
         }
-        return "redirect:/login";
+        mav.setViewName("login");
+        mav.addObject("errorInfo","用户名或密码错误");
+        return mav;
     }
 }
 
