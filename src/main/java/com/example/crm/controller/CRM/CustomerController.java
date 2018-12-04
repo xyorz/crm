@@ -2,6 +2,7 @@ package com.example.crm.controller.CRM;
 
 import com.example.crm.entity.Customer;
 import com.example.crm.repository.CustomerRepository;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ public class CustomerController {
 
     @PostMapping(path = "")
     public ResponseEntity<Map<String, String>> add(@RequestBody Customer customer) {
+
         customerRepository.save(customer);
 
         Map<String, String> map = new HashMap<>();
@@ -59,6 +61,15 @@ public class CustomerController {
 
     @PostMapping(path = "delete")
     public ResponseEntity<Map<String, String>> delete(@RequestBody JSONObject jsonObject) {
+        try{
+            jsonObject.getInt("id");
+        }
+        catch (JSONException e){
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "data type error");
+            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        }
+
         Optional<Customer> optionalCustomer = customerRepository.findById(jsonObject.getInt("id"));
         if(optionalCustomer.isPresent()){
             customerRepository.delete(optionalCustomer.get());
@@ -72,5 +83,7 @@ public class CustomerController {
         map.put("message", "customer did not exist");
         return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
     }
+
+
 
 }
