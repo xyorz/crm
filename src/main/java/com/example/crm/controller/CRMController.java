@@ -34,20 +34,32 @@ public class CRMController {
         return "login";
     }
 
-    @PostMapping("/index")
-    public ModelAndView loginVerify(String username, String password, HttpSession session){
+//    @GetMapping("/index")
+//    public String index1()
+//    {
+//        return "index";
+//    }
 
-//        Optional<Employee> optionalEmployee = Optional.of(employeeRepository.findByIdAndPassword(Integer.valueOf(username),password));
-        Employee employee = employeeRepository.findByIdAndPassword(Integer.valueOf(username),password);
+    @PostMapping("/login")
+    public ModelAndView loginVerify(String username, String password, HttpSession session){
         ModelAndView mav = new ModelAndView();
-        if (employee != null){
-            session.setAttribute(WebSecurityConfig.SESSION_KEY, username);
-            mav.setViewName("index");
-            return mav;
+
+        try{
+            Integer id = Integer.valueOf(username);
+            Employee employee = employeeRepository.findByIdAndPassword(id,password);
+            if (employee != null){
+                session.setAttribute(WebSecurityConfig.SESSION_KEY, username);
+                mav.setViewName("/");
+            }
+            mav.setViewName("login");
+            mav.addObject("errorInfo","用户名或密码错误");
+
         }
-        mav.setViewName("login");
-        mav.addObject("errorInfo","用户名或密码错误");
+        catch (Exception e){
+
+        }
         return mav;
+
     }
 }
 
