@@ -154,7 +154,7 @@ var TableEditable = function () {
                 delId = 0;
             }
 
-            ajaxUpload("link_nam/delete", "POST", {"id": delId});
+            ajaxUpload("link_man/delete", "POST", {"id": delId});
 
             var nRow = $(this).parents('tr')[0];
             oTable.fnDeleteRow(nRow);

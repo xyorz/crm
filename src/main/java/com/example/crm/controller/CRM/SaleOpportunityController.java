@@ -6,6 +6,7 @@ import com.example.crm.entity.SaleOpportunity;
 import com.example.crm.entity.Product;
 import com.example.crm.repository.*;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,12 @@ public class SaleOpportunityController {
 
     @PostMapping(path = "")
     public ResponseEntity<Map<String ,String>>  add(@RequestBody JSONObject jsonObject) {
+        if(!jsonDataCheck(jsonObject)) {
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "data type error");
+            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        }
+
         List<Product> products = new ArrayList<>();
         Optional<Customer> optionalCustomer = customerRepository.findByName(jsonObject.getString("customerName"));
         Optional<Employee> optionalEmployee = employeeRepository.findById(jsonObject.getInt("employeeId"));
@@ -73,6 +80,12 @@ public class SaleOpportunityController {
 
     @PostMapping(path = "update")
     public ResponseEntity<Map<String ,String>> update(@RequestBody JSONObject jsonObject) {
+        if(!jsonDataCheck(jsonObject)) {
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "data type error");
+            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        }
+
         Optional<SaleOpportunity> optionalSaleOpportunity = saleOpportunityRepository.findById(jsonObject.getInt("id"));
         if (optionalSaleOpportunity.isPresent()) {
             SaleOpportunity saleOpportunity = optionalSaleOpportunity.get();
@@ -117,6 +130,15 @@ public class SaleOpportunityController {
 
     @PostMapping(path = "delete")
     public ResponseEntity<Map<String, String>> delete(@RequestBody JSONObject jsonObject) {
+        try{
+            jsonObject.getInt("id");
+        }
+        catch (JSONException e){
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "data type error");
+            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        }
+
         Optional<SaleOpportunity> optionalSaleOpportunity = saleOpportunityRepository.findById(jsonObject.getInt("id"));
         if(optionalSaleOpportunity.isPresent()){
             saleOpportunityRepository.delete(optionalSaleOpportunity.get());
@@ -129,5 +151,21 @@ public class SaleOpportunityController {
         Map<String, String> map = new HashMap<>();
         map.put("message", "saleOpportunity did not exist");
         return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+    }
+
+    private boolean jsonDataCheck(JSONObject jsonObject){
+        try{
+            jsonObject.getInt("id");
+            jsonObject.getString("customerName");
+            jsonObject.getInt("employeeId");
+            List<Object> productIdObj = Arrays.asList(jsonObject.getJSONArray("productIds").toArray());
+            for(Object obj : productIdObj)
+                Integer.parseInt((String) obj);
+            jsonObject.getBoolean("isDeclare");
+            jsonObject.getString("record");
+        }catch (JSONException e){
+            return false;
+        }
+        return true;
     }
 }

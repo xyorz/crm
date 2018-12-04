@@ -34,7 +34,7 @@ public class CRMController {
         return "login";
     }
 
-    @PostMapping("/index")
+    @PostMapping("/login")
     public ModelAndView loginVerify(String username, String password, HttpSession session){
 
 //        Optional<Employee> optionalEmployee = Optional.of(employeeRepository.findByIdAndPassword(Integer.valueOf(username),password));
