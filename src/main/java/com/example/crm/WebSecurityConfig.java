@@ -16,18 +16,9 @@ import java.io.IOException;
 public class WebSecurityConfig extends WebMvcConfigurerAdapter {
     public final static String SESSION_KEY="employeenum";
 
-//    @Bean
-//    public SecurityInterceptor getSecurityInterceptor(){
-//        return new SecurityInterceptor();
-//    }
-
     public void  addInterceptors(InterceptorRegistry registry){
-//        InterceptorRegistration addInterceptor = registry.addInterceptor(getSecurityInterceptor());
-
-       // addInterceptor.excludePathPatterns("/error");
-        //addInterceptor.excludePathPatterns("/login**");
-        //addInterceptor.addPathPatterns("/**");
-        registry.addInterceptor(new SecurityInterceptor()).addPathPatterns("/**").excludePathPatterns("/login**").excludePathPatterns("/error");
+        registry.addInterceptor(new SecurityInterceptor())
+                .addPathPatterns("/**").excludePathPatterns("/login**").excludePathPatterns("/error").excludePathPatterns("/assets/**");
     }
 
     private class SecurityInterceptor extends HandlerInterceptorAdapter {
