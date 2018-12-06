@@ -35,6 +35,8 @@ public class CRMController {
             Employee employee = employeeRepository.findByIdAndPassword(id,password);
             if (employee != null){
                 session.setAttribute(WebSecurityConfig.SESSION_KEY, username);
+                session.setAttribute("id", id);
+                session.setAttribute("level", employee.getLevel());
                 mav.setViewName("index");
             }
             else {

@@ -1,6 +1,8 @@
 package com.example.crm.entity;
 
 
+import org.springframework.stereotype.Controller;
+
 import javax.persistence.*;
 
 
@@ -28,16 +30,20 @@ public class Employee {
     @Column(nullable = false)
     private String remark;
 
+    @Column(nullable = false)
+    private Integer level;
+
     public Employee() {
     }
 
-    public Employee(String name, Boolean sex, String tel, String password, Boolean empty, String remark) {
+    public Employee(String name, Boolean sex, String tel, String password, Boolean empty, String remark, Integer level) {
         this.name = name;
         this.sex = sex;
         this.tel = tel;
         this.password = password;
         this.empty = empty;
         this.remark = remark;
+        this.level = level;
     }
 
     public Integer getId() {
@@ -96,4 +102,11 @@ public class Employee {
         this.remark = remark;
     }
 
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
 }

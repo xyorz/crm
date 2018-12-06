@@ -10,24 +10,24 @@
     <meta name="MobileOptimized" content="320">
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
-    <link href="assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-    <link href="assets/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css"/>
-    <link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-    <link href="assets/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
     <!-- END GLOBAL MANDATORY STYLES -->
     <!-- BEGIN PAGE LEVEL STYLES -->
-    <link rel="stylesheet" type="text/css" href="assets/plugins/select2/select2.css"/>
-    <link rel="stylesheet" type="text/css" href="assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="/assets/plugins/select2/select2.css"/>
+    <link rel="stylesheet" type="text/css" href="/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
     <!-- END PAGE LEVEL STYLES -->
     <!-- BEGIN THEME STYLES -->
-    <link href="assets/css/style-conquer.css" rel="stylesheet" type="text/css"/>
-    <link href="assets/css/style.css" rel="stylesheet" type="text/css"/>
-    <link href="assets/css/style-responsive.css" rel="stylesheet" type="text/css"/>
-    <link href="assets/css/plugins.css" rel="stylesheet" type="text/css"/>
-    <link href="assets/css/themes/default.css" rel="stylesheet" type="text/css" id="style_color"/>
-    <link href="assets/css/custom.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/css/style-conquer.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/css/style-responsive.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/css/plugins.css" rel="stylesheet" type="text/css"/>
+    <link href="/assets/css/themes/default.css" rel="stylesheet" type="text/css" id="style_color"/>
+    <link href="/assets/css/custom.css" rel="stylesheet" type="text/css"/>
     <!-- END THEME STYLES -->
-    <link rel="shortcut icon" href="favicon.ico"/>
+    <link rel="shortcut icon" href="/favicon.ico"/>
 </head>
 <body>
 
@@ -102,7 +102,7 @@
             <li class="dropdown user">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
                     <img alt="" src=""/>
-                    <span class="username username-hide-on-mobile">Nick </span>
+                    <span class="username username-hide-on-mobile" th:text="${session.employeenum}">Nick </span>
                     <i class="fa fa-angle-down"></i>
                 </a>
                 <ul class="dropdown-menu">
@@ -114,7 +114,7 @@
                     <li class="divider">
                     </li>
                     <li>
-                        <a href="login.html" th:href="@{login}"><i class="fa fa-key"></i> Log Out</a>
+                        <a href="login.html" th:href="@{/login}"><i class="fa fa-key"></i> Log Out</a>
                     </li>
                 </ul>
             </li>
@@ -162,15 +162,15 @@
                 </a>
                 <ul class="sub-menu">
                     <li>
-                        <a href="customer.html" th:href="@{customer}">
+                        <a href="customer.html" th:href="@{/customer}">
                             客户信息</a>
                     </li>
                     <li>
-                        <a href="customer_share.html" th:href="@{/customer_share}">
+                        <a href="customer_share.html" th:href="@{/customer/share}">
                             客户共享</a>
                     </li>
                     <li>
-                        <a href="customer_analysis.html" th:href="@{/customer_analysis}">
+                        <a href="customer_analysis.html" th:href="@{/customer/analysis}">
                             客户统计分析</a>
                     </li>
                 </ul>
@@ -183,7 +183,7 @@
                 </a>
                 <ul class="sub-menu">
                     <li>
-                        <a href="product.html" th:href="@{product}">
+                        <a href="product.html" th:href="@{/product}">
                             产品信息</a>
                     </li>
                 </ul>
@@ -196,8 +196,12 @@
                 </a>
                 <ul class="sub-menu">
                     <li>
-                        <a href="sale_opportunity.html" th:href="@{sale_opportunity}">
+                        <a href="sale_opportunity.html" th:href="@{/sale_opportunity}">
                             销售机会信息</a>
+                    </li>
+                    <li>
+                        <a href="my_sale_opportunity.html" th:href="@{/sale_opportunity/my_opp(id=${session.id})}">
+                            我的销售机会</a>
                     </li>
                 </ul>
             </li>
@@ -209,7 +213,7 @@
                 </a>
                 <ul class="sub-menu">
                     <li>
-                        <a href="order.html" th:href="@{order}">
+                        <a href="order.html" th:href="@{/order}">
                             订单信息</a>
                     </li>
                 </ul>

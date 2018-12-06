@@ -15,12 +15,12 @@ var TableEditable = function () {
         function editRow1(oTable, nRow) {
             var aData = oTable.fnGetData(nRow);
             var jqTds = $('>td', nRow);
+            // jqTds[0].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[0] + '">';
             jqTds[1].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[1] + '">';
             jqTds[2].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[2] + '">';
             jqTds[3].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[3] + '">';
             jqTds[4].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[4] + '">';
-            jqTds[5].innerHTML = '<a class="edit" href="">保存</a>';
-            jqTds[6].innerHTML = '<a class="cancel" href="">放弃</a>';
+            jqTds[5].innerHTML = '<a class="edit" href="">保存</a><br><a class="cancel" href="">放弃</a>';
         }
         function editRow(oTable, nRow) {
             var aData = oTable.fnGetData(nRow);
@@ -29,8 +29,7 @@ var TableEditable = function () {
             jqTds[2].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[2] + '">';
             jqTds[3].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[3] + '">';
             jqTds[4].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[4] + '">';
-            jqTds[5].innerHTML = '<a class="edit" href="">保存</a>';
-            jqTds[6].innerHTML = '<a class="cancel" href="">放弃</a>';
+            jqTds[5].innerHTML = '<a class="edit" href="">保存</a><br><a class="cancel" href="">放弃</a>';
         }
         function saveRow(oTable, nRow) {
             var aData = oTable.fnGetData(nRow);
@@ -51,18 +50,6 @@ var TableEditable = function () {
                 oTable.fnUpdate(jqInputs[2].value, nRow, 3, false);
                 oTable.fnUpdate(jqInputs[3].value, nRow, 4, false);
             }
-            oTable.fnUpdate('<a class="edit" href="">编辑</a>', nRow, 5, false);
-            oTable.fnUpdate('<a class="delete" href="">删除</a>', nRow, 6, false);
-            oTable.fnDraw();
-        }
-
-        function cancelEditRow(oTable, nRow) {
-            var jqInputs = $('input', nRow);
-            oTable.fnUpdate(jqInputs[0].value, nRow, 0, false);
-            oTable.fnUpdate(jqInputs[1].value, nRow, 1, false);
-            oTable.fnUpdate(jqInputs[2].value, nRow, 2, false);
-            oTable.fnUpdate(jqInputs[3].value, nRow, 3, false);
-            oTable.fnUpdate(jqInputs[4].value, nRow, 4, false);
             oTable.fnUpdate('<a class="edit" href="">编辑</a>', nRow, 5, false);
             oTable.fnDraw();
         }
@@ -135,14 +122,13 @@ var TableEditable = function () {
 
         $('#sample_editable_1_new').click(function (e) {
             e.preventDefault();
-            console.log(nNew === true);
-            console.log(nEditing === null);
-            if (nEditing) {
+
+            if (nNew && nEditing) {
                 if (confirm("存在数据没有保存，是否保存？")) {
                     saveRow(oTable, nEditing); // save
+                    $(nEditing).find("td:first").html("Untitled");
                     nEditing = null;
                     nNew = false;
-
                 } else {
                     oTable.fnDeleteRow(nEditing); // cancel
                     nEditing = null;
@@ -151,7 +137,7 @@ var TableEditable = function () {
                 }
             }
 
-            var aiNew = oTable.fnAddData(['', '', '', '', '', '','']);
+            var aiNew = oTable.fnAddData(['', '', '', '', '', '']);
             var nRow = oTable.fnGetNodes(aiNew[0]);
             editRow1(oTable, nRow);
             nEditing = nRow;
@@ -161,7 +147,7 @@ var TableEditable = function () {
         table.on('click', '.delete', function (e) {
             e.preventDefault();
 
-            if (confirm("是否删除此客户信息？") == false) {
+            if (confirm("是否删除此信息？") == false) {
                 return;
             }
 
@@ -217,6 +203,9 @@ var TableEditable = function () {
                 editRow(oTable, nRow);
                 nEditing = nRow;
             }
+        });
+        table.on('click', '.sonpage', function (e) {
+            window.location.href="customer_man.html?id="+this.innerHTML;
         });
     }
 
