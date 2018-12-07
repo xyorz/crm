@@ -9,9 +9,6 @@ public class SaleOpportunity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false)
-    private Boolean isDeclare;
-
     @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn
     private Employee employee;
@@ -24,18 +21,13 @@ public class SaleOpportunity {
     @JoinColumn
     private Customer customer;
 
-    @Column(nullable = false)
-    private String record;
-
     public SaleOpportunity() {
     }
 
-    public SaleOpportunity(Boolean isDeclare, Employee employee, List<Product> productList, Customer customer, String record) {
-        this.isDeclare = isDeclare;
+    public SaleOpportunity(Employee employee, List<Product> productList, Customer customer) {
         this.employee = employee;
         this.products = productList;
         this.customer = customer;
-        this.record = record;
     }
 
     public Integer getId() {
@@ -44,14 +36,6 @@ public class SaleOpportunity {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Boolean getDeclare() {
-        return isDeclare;
-    }
-
-    public void setDeclare(Boolean declare) {
-        isDeclare = declare;
     }
 
     public List<Product> getProducts() {
@@ -78,11 +62,6 @@ public class SaleOpportunity {
         this.customer = customer;
     }
 
-    public String getRecord() {
-        return record;
-    }
 
-    public void setRecord(String record) {
-        this.record = record;
-    }
+
 }
