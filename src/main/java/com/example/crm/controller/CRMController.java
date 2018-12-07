@@ -54,7 +54,12 @@ public class CRMController {
         }
         return mav;
     }
-
+    
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.removeAttribute(WebSecurityConfig.SESSION_KEY);
+        return "redirect:/login";
+    }
 }
 
 
