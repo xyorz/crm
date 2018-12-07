@@ -48,6 +48,7 @@ Version: 2.0
                             </div>
                         </div>
                     </div>
+                    <input type="hidden" th:value="${session.employeenum}">
                     <table class="table table-striped table-hover table-bordered" id="sample_editable_1">
                         <thead>
                         <tr>
@@ -76,23 +77,23 @@ Version: 2.0
                         </thead>
                         <!--插入数据-->
                         <tbody>
-                        <tr>
+                        <tr th:each="product : ${products}">
                             <td>
-                                <a class="sonpage" href="javascript:;"> alex</a>
+                                <a class="sonpage" href="javascript:;" th:text="${product.getId()}"> alex</a>
                             </td>
-                            <td>
+                            <td th:text="${product.getVariety()}">
                                 Alex Nilson
                             </td>
-                            <td>
+                            <td th:text="${product.getAmount()}">
                                 power user
                             </td>
-                            <td>
+                            <td th:text="${product.getPrice()}">
                                 Alex Nilson
                             </td>
-                            <td>
+                            <td th:text="${product.getCost()}">
                                 Alex Nilson
                             </td>
-                            <td>
+                            <td th:text="${product.getAnalysis()}">
                                 Alex Nilson
                             </td>
                             <td>

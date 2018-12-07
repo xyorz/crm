@@ -84,9 +84,10 @@ var TableEditable = function () {
             })
         }
 
+        var action_type = null;
+
         var table = $('#sample_editable_1');
 
-        var action_type = null;
 
         var oTable = table.dataTable({
             "lengthMenu": [
@@ -205,7 +206,7 @@ var TableEditable = function () {
             }
         });
         table.on('click', '.sonpage', function (e) {
-            window.location.href="customer_man.html?id="+this.innerHTML;
+            window.location.href="customer_man.html?id=" + $(this).parent().siblings().eq(0).text();
         });
     }
 

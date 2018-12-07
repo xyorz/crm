@@ -22,7 +22,7 @@ Version: 2.0
 </div>
 <!-- BEGIN CONTAINER -->
 <div class="page-container">
-    <div th:replace="base :: commonSideBar">
+    <div th:replace="base :: commonSideBar(order)">
     </div>
     <!-- BEGIN CONTENT -->
     <div class="page-content-wrapper">
@@ -124,7 +124,7 @@ Version: 2.0
                                     <td th:text="${order.getDate()}">
                                         1234
                                     </td>
-                                    <td class="center" th:text="${order.getProduct().getName()}">
+                                    <td class="center" th:text="${order.getProduct().getId()}">
                                         power user
                                     </td>
                                     <td th:text="${order.getValue()}">
@@ -136,13 +136,13 @@ Version: 2.0
                                     <td th:text="${order.getStatus()}">
                                         Alex Nilson
                                     </td>
-                                    <td th:text="${order.getStatus()}">
+                                    <td th:text="${order.getReceiptStatus()}">
                                         Alex Nilson
                                     </td>
                                     <td th:text="${order.getEmployee().getId()}">
                                         Alex Nilson
                                     </td>
-                                    <td th:text="${order.getVariety()}">
+                                    <td th:text="${order.getRecord()}">
                                         Alex Nilson
                                     </td>
                                     <td>

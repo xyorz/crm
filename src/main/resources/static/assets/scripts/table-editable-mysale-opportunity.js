@@ -16,7 +16,7 @@ var TableEditable = function () {
         function editRow(oTable, nRow) {
             var aData = oTable.fnGetData(nRow);
             var jqTds = $('>td', nRow);
-            jqTds[0].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[0] + '">';
+            // jqTds[0].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[0] + '">';
             jqTds[1].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[1] + '">';
             jqTds[2].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[2] + '">';
             jqTds[3].innerHTML = '<a class="edit" href="">保存</a>';
@@ -58,6 +58,37 @@ var TableEditable = function () {
             oTable.fnUpdate('<a class="edit" href="">编辑</a>', nRow, 3, false);
             oTable.fnDraw();
         }
+
+        function gatherRowData(nRow){
+            var jqInputs = $('input', nRow);
+            var c0V = $(nRow).children("td").eq(0).text();
+            if(c0V === ""||c0V===null) action_type = "add";
+            else action_type = "update";
+            var c1V = $.trim(jqInputs[0].value).split(" ");
+            var c2V = jqInputs[1].value;
+            var current_id = $("#current_employee_id").attr("value");
+            return {"id": c0V, "productIds": c1V, "customerName": c2V, "findEmployeeId": current_id};
+        }
+
+        function ajaxUpload(url, method, data) {
+            $.ajax({
+                type: method,
+                url: url,
+                data: JSON.stringify(data),
+                async: false,
+                contentType:"application/json",
+                success: function(result){
+                    alert(result.message);
+                    location.reload();
+                },
+                error: function (result) {
+                    alert(result.responseText);
+                    location.reload();
+                }
+            })
+        }
+
+        var action_type = null;
 
         var table = $('#sample_editable_1');
         var table2 = $('#sample_editable_2');
@@ -152,9 +183,17 @@ var TableEditable = function () {
                 return;
             }
 
+            var delId = 0;
+            try{
+                delId = $(this).parent().parent().children('td').eq(0).text();
+            }catch (e) {
+                delId = 0;
+            }
+
+            ajaxUpload("/sale_opportunity/delete", "POST", {"id": delId});
+
             var nRow = $(this).parents('tr')[0];
             oTable.fnDeleteRow(nRow);
-            alert("信息已删除完成");
         });
 
         table.on('click', '.cancel', function (e) {
@@ -182,9 +221,13 @@ var TableEditable = function () {
                 nEditing = nRow;
             } else if (nEditing == nRow && this.innerHTML == "保存") {
                 /* Editing this row and want to save it */
+                var data = gatherRowData(nEditing);
+                var url = null;
+                if(action_type==="add") url = "/sale_opportunity";
+                else url = "/sale_opportunity/update";
+                ajaxUpload(url, "POST", data);
                 saveRow(oTable, nEditing);
                 nEditing = null;
-                alert("更新完毕");
             } else {
                 /* No edit in progress - let's start one */
                 editRow1(oTable, nRow);
@@ -192,7 +235,7 @@ var TableEditable = function () {
             }
         });
         table2.on('click', '.sonpage', function (e) {
-            window.location.href="/followup?id="+this.innerHTML;
+            window.location.href="/followup?saleOpportunityId="+this.innerHTML;
         });
     }
 

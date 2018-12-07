@@ -16,6 +16,10 @@ public class SaleOpportunity {
     @JoinColumn
     private Employee employee;
 
+    @ManyToOne(cascade = CascadeType.DETACH)
+    @JoinColumn
+    private Employee findEmployee;
+
     @ManyToMany(cascade = CascadeType.DETACH)
     @JoinColumn(name = "saleOpportunityId")
     private List<Product> products;
@@ -24,18 +28,15 @@ public class SaleOpportunity {
     @JoinColumn
     private Customer customer;
 
-    @Column(nullable = false)
-    private String record;
-
     public SaleOpportunity() {
     }
 
-    public SaleOpportunity(Boolean isDeclare, Employee employee, List<Product> productList, Customer customer, String record) {
+    public SaleOpportunity(Boolean isDeclare, Employee employee, Employee findEmployee, List<Product> products, Customer customer) {
         this.isDeclare = isDeclare;
         this.employee = employee;
-        this.products = productList;
+        this.findEmployee = findEmployee;
+        this.products = products;
         this.customer = customer;
-        this.record = record;
     }
 
     public Integer getId() {
@@ -66,6 +67,14 @@ public class SaleOpportunity {
         return employee;
     }
 
+    public Employee getFindEmployee() {
+        return findEmployee;
+    }
+
+    public void setFindEmployee(Employee findEmployee) {
+        this.findEmployee = findEmployee;
+    }
+
     public void setEmployee(Employee employee) {
         this.employee = employee;
     }
@@ -78,11 +87,4 @@ public class SaleOpportunity {
         this.customer = customer;
     }
 
-    public String getRecord() {
-        return record;
-    }
-
-    public void setRecord(String record) {
-        this.record = record;
-    }
 }

@@ -25,6 +25,9 @@ public class Orders {
     private String status;
 
     @Column(nullable = false)
+    private String receiptStatus;
+
+    @Column(nullable = false)
     private Date date;
 
     @Column(nullable = false)
@@ -34,20 +37,21 @@ public class Orders {
     private float paidValue;
 
     @Column(nullable = false)
-    private String variety;
+    private String record;
 
     public Orders() {
     }
 
-    public Orders(Customer customer, Employee employee, Product product, String status, Date date, float value, float paidValue, String variety) {
+    public Orders(Customer customer, Employee employee, Product product, String status, String receiptStatus, Date date, float value, float paidValue, String record) {
         this.customer = customer;
         this.employee = employee;
         this.product = product;
         this.status = status;
+        this.receiptStatus = receiptStatus;
         this.date = date;
         this.value = value;
         this.paidValue = paidValue;
-        this.variety = variety;
+        this.record = record;
     }
 
     public Integer getId() {
@@ -90,6 +94,14 @@ public class Orders {
         this.status = status;
     }
 
+    public String getReceiptStatus() {
+        return receiptStatus;
+    }
+
+    public void setReceiptStatus(String receiptStatus) {
+        this.receiptStatus = receiptStatus;
+    }
+
     public Date getDate() {
         return date;
     }
@@ -114,11 +126,11 @@ public class Orders {
         this.paidValue = paidValue;
     }
 
-    public String getVariety() {
-        return variety;
+    public String getRecord() {
+        return record;
     }
 
-    public void setVariety(String variety) {
-        this.variety = variety;
+    public void setRecord(String record) {
+        this.record = record;
     }
 }

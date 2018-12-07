@@ -23,7 +23,7 @@ Version: 2.0
 <!-- BEGIN CONTAINER -->
 <div class="page-container">
     <!-- BEGIN SIDEBAR -->
-    <div th:replace="base :: commonSideBar">
+    <div th:replace="base :: commonSideBar(customer)">
     </div>
     <!-- END SIDEBAR -->
     <!-- BEGIN CONTENT -->
@@ -99,10 +99,10 @@ Version: 2.0
                                 <!--插入数据-->
                                 <tbody>
                                 <tr th:each="customer : ${customers}">
-                                    <td>
-                                        <a href="link_man.html" th:id="'td_'+${customer.getId()}" th:href="@{link_man(customerId=${customer.getId()})}" th:text="${customer.getId()}">alex</a>
+                                    <td th:text="${customer.getId()}">
+                                        alex
                                     </td>
-                                    <td th:id="'link_man?customerId='+${customer.getId()}" th:text="${customer.getName()}">
+                                    <td class="sonpage" th:text="${customer.getName()}">
                                         alex
                                     </td>
                                     <td th:text="${customer.getTel()}">

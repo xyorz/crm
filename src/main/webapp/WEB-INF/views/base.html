@@ -126,7 +126,7 @@
 </div>
 
 <!-- BEGIN SIDEBAR -->
-<div class="page-sidebar-wrapper" th:fragment="commonSideBar">
+<div class="page-sidebar-wrapper" th:fragment="commonSideBar(active)">
     <div class="page-sidebar navbar-collapse collapse">
         <!-- BEGIN SIDEBAR MENU -->
         <!-- DOC: for circle icon style menu apply page-sidebar-menu-circle-icons class right after sidebar-toggler-wrapper -->
@@ -147,14 +147,14 @@
                     </div>
                 </form>
             </li>
-            <li class="start active ">
+            <li class="start active" th:class="${active=='index'} ? 'start active' : 'start'">
                 <a href="index.html" th:href="@{/}">
                     <i class="icon-home"></i>
                     <span class="title">首页</span>
                     <span class="selected"></span>
                 </a>
             </li>
-            <li >
+            <li th:class="${active=='customer'} ? 'active' : ''">
                 <a href="javascript:;">
                     <i class="icon-puzzle"></i>
                     <span class="title">客户</span>
@@ -175,7 +175,7 @@
                     </li>
                 </ul>
             </li>
-            <li >
+            <li th:class="${active=='product'} ? 'active' : ''">
                 <a href="javascript:;">
                     <i class="icon-present"></i>
                     <span class="title">产品</span>
@@ -188,7 +188,7 @@
                     </li>
                 </ul>
             </li>
-            <li >
+            <li th:class="${active=='sale'} ? 'active' : ''">
                 <a href="javascript:;">
                     <i class="icon-calendar"></i>
                     <span class="title">销售</span>
@@ -200,12 +200,12 @@
                             销售机会信息</a>
                     </li>
                     <li>
-                        <a href="my_sale_opportunity.html" th:href="@{/sale_opportunity/my_opp(id=${session.id})}">
+                        <a href="my_sale_opportunity.html" th:href="@{/sale_opportunity/my_opp(employeeId=${session.id})}">
                             我的销售机会</a>
                     </li>
                 </ul>
             </li>
-            <li >
+            <li th:class="${active=='order'} ? 'active' : ''">
                 <a href="javascript:;">
                     <i class="icon-docs"></i>
                     <span class="title">订单</span>

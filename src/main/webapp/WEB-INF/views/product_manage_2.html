@@ -77,22 +77,22 @@ Version: 2.0
                         <!--插入数据-->
                         <tbody>
                         <tr>
-                            <td>
+                            <td th:text="${product.getId()}">
                                alex
                             </td>
-                            <td>
+                            <td th:text="${product.getVariety()}">
                                 Alex Nilson
                             </td>
-                            <td>
+                            <td th:text="${product.getAmount()}">
                                 power user
                             </td>
-                            <td>
+                            <td th:text="${product.getPrice()}">
                                 Alex Nilson
                             </td>
-                            <td>
+                            <td th:text="${product.getCost()}">
                                 Alex Nilson
                             </td>
-                            <td>
+                            <td th:text="${product.getAnalysis()}">
                                 Alex Nilson
                             </td>
                             <td>
@@ -152,29 +152,29 @@ Version: 2.0
                         </thead>
                         <!--插入数据-->
                         <tbody>
-                        <tr>
-                            <td>
+                        <tr th:each="order : ${orders}">
+                            <td th:text="${order.getId()}">
                                 alex
                             </td>
-                            <td>
+                            <td th:text="${order.getCustomer().getId()}">
                                 Alex Nilson
                             </td>
-                            <td>
+                            <td th:text="${order.getDate()}">
                                 1234
                             </td>
-                            <td >
+                            <td th:text="${order.getValue()}">
                                 power user
                             </td>
-                            <td>
+                            <td th:text="${order.getPaidValue()}">
                                 Alex Nilson
                             </td>
-                            <td>
+                            <td th:text="${order.getStatus()}">
                                 Alex Nilson
                             </td>
-                            <td>
+                            <td th:text="${order.getReceiptStatus()}">
                                 Alex Nilson
                             </td>
-                            <td>
+                            <td th:text="${order.getRecord()}">
                                 Alex Nilson
                             </td>
                         </tr>

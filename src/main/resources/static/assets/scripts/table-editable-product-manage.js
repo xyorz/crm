@@ -16,7 +16,7 @@ var TableEditable = function () {
         function editRow(oTable, nRow) {
             var aData = oTable.fnGetData(nRow);
             var jqTds = $('>td', nRow);
-            jqTds[0].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[0] + '">';
+            // jqTds[0].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[0] + '">';
             jqTds[1].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[1] + '">';
             jqTds[2].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[2] + '">';
             jqTds[3].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[3] + '">';
@@ -58,6 +58,39 @@ var TableEditable = function () {
             oTable.fnUpdate('<a class="edit" href="">编辑</a>', nRow,6, false);
             oTable.fnDraw();
         }
+
+        function gatherRowData(nRow){
+            var jqInputs = $('input', nRow);
+            var c0V = $(nRow).children("td").eq(0).text();
+            if(c0V === ""||c0V===null) action_type = "add";
+            else action_type = "update";
+            var c1V = jqInputs[0].value;
+            var c2V = jqInputs[1].value;
+            var c3V = jqInputs[2].value;
+            var c4V = jqInputs[3].value;
+            var c5V = jqInputs[4].value;
+            return {"id": c0V, "variety": c1V, "amount": c2V, "price": c3V, "cost": c4V, "analysis": c5V};
+        }
+
+        function ajaxUpload(url, method, data) {
+            $.ajax({
+                type: method,
+                url: url,
+                data: JSON.stringify(data),
+                async: false,
+                contentType:"application/json",
+                success: function(result){
+                    alert(result.message);
+                    location.reload();
+                },
+                error: function (result) {
+                    alert(result.responseText);
+                    location.reload();
+                }
+            })
+        }
+
+        var action_type = null;
 
         var table = $('#sample_editable_1');
 
@@ -154,10 +187,13 @@ var TableEditable = function () {
                 editRow(oTable, nRow);
                 nEditing = nRow;
             } else if (nEditing === nRow && this.innerHTML === "保存") {
-                /* Editing this row and want to save it */
+                var data = gatherRowData(nEditing);
+                var url = null;
+                if(action_type==="add") url = "/product";
+                else url = "/product/update";
+                ajaxUpload(url, "POST", data);
                 saveRow(oTable, nEditing);
                 nEditing = null;
-                alert("更新完毕");
             } else {
                 /* No edit in progress - let's start one */
                 editRow1(oTable, nRow);
