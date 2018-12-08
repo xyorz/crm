@@ -206,7 +206,8 @@ var TableEditable = function () {
             }
         });
         table.on('click', '.sonpage', function (e) {
-            window.location.href="customer_man.html?id=" + $(this).parent().siblings().eq(0).text();
+            var id = + $(this).parent().siblings().eq(0).text();
+            window.location.href="/link_man?customerId=" + id;
         });
     }
 
