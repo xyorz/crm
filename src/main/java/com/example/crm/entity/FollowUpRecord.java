@@ -1,5 +1,6 @@
 package com.example.crm.entity;
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 public class FollowUpRecord {
@@ -9,41 +10,33 @@ public class FollowUpRecord {
     private Integer id;
 
     @ManyToOne(cascade = CascadeType.DETACH)
-    @JoinColumn(name = "employeeId", referencedColumnName = "id")
-    private Employee employee;
+    @JoinColumn(name = "saleOpportunityId", referencedColumnName = "id")
+    private SaleOpportunity saleOpportunity;
 
-    @ManyToOne(cascade = CascadeType.DETACH)
-    @JoinColumn(name = "customerId", referencedColumnName = "id")
-    private Customer customer;
-
+    @Column
     private String record;
+
+    @Column
+    private Date date;
 
     @Column(nullable = false)
     private Boolean isDeclare;
 
     public FollowUpRecord(){}
 
-    public FollowUpRecord(Employee employee, Customer customer, String record, Boolean isDeclare) {
-        this.employee = employee;
-        this.customer = customer;
+    public FollowUpRecord(SaleOpportunity saleOpportunity, String record, Date date, Boolean isDeclare) {
+        this.saleOpportunity = saleOpportunity;
         this.record = record;
+        this.date = date;
         this.isDeclare = isDeclare;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public SaleOpportunity getSaleOpportunity() {
+        return saleOpportunity;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setSaleOpportunity(SaleOpportunity saleOpportunity) {
+        this.saleOpportunity = saleOpportunity;
     }
 
     public String getRecord() {
@@ -52,6 +45,14 @@ public class FollowUpRecord {
 
     public void setRecord(String record) {
         this.record = record;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public Integer getId() {

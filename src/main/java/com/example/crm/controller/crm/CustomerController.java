@@ -39,7 +39,11 @@ public class CustomerController {
 
     @PostMapping(path = "")
     public ResponseEntity<Map<String, String>> add(@RequestBody Customer customer) {
-
+        if (customerRepository.findByName(customer.getName()).isPresent()){
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "customer name already exist");
+            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        }
         customerRepository.save(customer);
 
         Map<String, String> map = new HashMap<>();
@@ -52,6 +56,16 @@ public class CustomerController {
         Optional<Customer> optionalCustomer = customerRepository.findById(customer.getId());
         if(optionalCustomer.isPresent()){
             Customer cus = optionalCustomer.get();
+
+            // 如果修改了用户名，检查修改的用户名是否已存在
+            if(!customer.getName().equals(cus.getName())){
+                if(customerRepository.findByName(customer.getName()).isPresent()){
+                    Map<String, String> map = new HashMap<>();
+                    map.put("message", "customerName already exist");
+                    return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+                }
+            }
+
             cus.setName(customer.getName());
             cus.setTel(customer.getTel());
             cus.setAddress(customer.getAddress());
@@ -94,6 +108,18 @@ public class CustomerController {
         return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
     }
 
+
+    private boolean jsonDataCheck(JSONObject jsonObject){
+        try{
+            if(jsonObject.get("id")!=null && jsonObject.get("id")!="")
+                jsonObject.getInt("id");
+            jsonObject.getString("name");
+            jsonObject.getString("tel");
+        }catch (Exception e){
+            return false;
+        }
+        return true;
+    }
 
 
 }

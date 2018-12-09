@@ -105,8 +105,8 @@ var TableEditable = function () {
             var c7V = jqInputs[6].value;
             var c8V = jqInputs[7].value;
             var c9V = jqInputs[8].value;
-            return {"id": c0V, "customerId": c1V, "date": c2V, "productName": c3V, "value": c4V, "paidValue": c5V,
-                "status": c6V, "invoiceStatus": c7V, "employeeId": c8V, "variety": c9V};
+            return {"id": c0V, "customerId": c1V, "date": c2V, "productId": c3V, "value": c4V, "paidValue": c5V,
+                "status": c6V, "receiptStatus": c7V, "employeeId": c8V, "record": c9V};
         }
 
         function ajaxUpload(url, method, data) {

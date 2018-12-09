@@ -49,14 +49,14 @@ public class OrdersController {
 
         Optional<Customer> optionalCustomer = customerRepository.findById(jsonObject.getInt("customerId"));
         Optional<Employee> optionalEmployee = employeeRepository.findById(jsonObject.getInt("employeeId"));
-        Optional<Product> optionalProduct = productRepository.getByName(jsonObject.getString("productName"));
+        Optional<Product> optionalProduct = productRepository.findById(jsonObject.getInt("productId"));
         if(optionalCustomer.isPresent()&&optionalEmployee.isPresent()&&optionalProduct.isPresent()){
             Customer customer = optionalCustomer.get();
             Employee employee = optionalEmployee.get();
             Product product = optionalProduct.get();
-            Orders order = new Orders(customer, employee, product, jsonObject.getString("status"), new Date(),
+            Orders order = new Orders(customer, employee, product, jsonObject.getString("status"), jsonObject.getString("receiptStatus"), new Date(),
                     Float.parseFloat((String) jsonObject.get("paidValue")), Float.parseFloat((String) jsonObject.get("paidValue")),
-                    jsonObject.getString("variety"));
+                    jsonObject.getString("record"));
             orderRepository.save(order);
 
             Map<String, String> map = new HashMap<>();
@@ -81,7 +81,7 @@ public class OrdersController {
             Orders order = optionalSaleOpportunity.get();
             Optional<Customer> optionalCustomer = customerRepository.findById(jsonObject.getInt("customerId"));
             Optional<Employee> optionalEmployee = employeeRepository.findById(jsonObject.getInt("employeeId"));
-            Optional<Product> optionalProduct = productRepository.getByName(jsonObject.getString("productName"));
+            Optional<Product> optionalProduct = productRepository.findById(jsonObject.getInt("productId"));
             if (optionalCustomer.isPresent() && optionalEmployee.isPresent() && optionalProduct.isPresent()) {
                 Customer customer = optionalCustomer.get();
                 Employee employee = optionalEmployee.get();
@@ -93,7 +93,8 @@ public class OrdersController {
                 order.setPaidValue(Float.parseFloat((String) jsonObject.get("paidValue")));
                 order.setValue(Float.parseFloat((String) jsonObject.get("value")));
                 order.setStatus(jsonObject.getString("status"));
-                order.setVariety(jsonObject.getString("variety"));
+                order.setReceiptStatus(jsonObject.getString("receiptStatus"));
+                order.setRecord(jsonObject.getString("record"));
                 orderRepository.save(order);
 
                 Map<String, String> map = new HashMap<>();
@@ -136,14 +137,16 @@ public class OrdersController {
 
     private boolean jsonDataCheck(JSONObject jsonObject){
         try{
-            jsonObject.getInt("id");
+            if(jsonObject.get("id")!=null && jsonObject.get("id")!="")
+                jsonObject.getInt("id");
             jsonObject.getInt("customerId");
             jsonObject.getInt("employeeId");
-            jsonObject.getString("productName");
+            jsonObject.getInt("productId");
             Float.parseFloat((String) jsonObject.get("paidValue"));
             Float.parseFloat((String) jsonObject.get("value"));
             jsonObject.getString("status");
-            jsonObject.getString("variety");
+            jsonObject.getString("receiptStatus");
+            jsonObject.getString("record");
         }catch (Exception e){
             return false;
         }

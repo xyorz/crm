@@ -116,7 +116,8 @@ public class LinkManController {
 
     private boolean jsonDataCheck(JSONObject jsonObject){
         try{
-            jsonObject.getInt("id");
+            if(jsonObject.get("id")!=null && jsonObject.get("id")!="")
+                jsonObject.getInt("id");
             jsonObject.getString("name");
             jsonObject.getString("tel");
         }catch (Exception e){
