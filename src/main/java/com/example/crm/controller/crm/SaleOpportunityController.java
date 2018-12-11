@@ -1,9 +1,6 @@
 package com.example.crm.controller.crm;
 
-import com.example.crm.entity.Customer;
-import com.example.crm.entity.Employee;
-import com.example.crm.entity.SaleOpportunity;
-import com.example.crm.entity.Product;
+import com.example.crm.entity.*;
 import com.example.crm.repository.*;
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import net.sf.json.JSONException;
@@ -29,6 +26,8 @@ public class SaleOpportunityController {
     private EmployeeRepository employeeRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private FollowUpRecordRepository followUpRecordRepository;
 
     @GetMapping("")
     public ModelAndView saleOpportunity(){
@@ -68,6 +67,29 @@ public class SaleOpportunityController {
         }
         Map<String, String> map = new HashMap<>();
         map.put("message", "employee or saleOpportunity do not exist");
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping(path = "complete")
+    public ResponseEntity<Map<String,String>> finish(@RequestParam Integer saleOpportunityId){
+        Optional<SaleOpportunity> optionalSaleOpportunity = saleOpportunityRepository.findById(saleOpportunityId);
+        if(optionalSaleOpportunity.isPresent()) {
+            SaleOpportunity saleOpportunity = optionalSaleOpportunity.get();
+            List<FollowUpRecord> followUpRecords = followUpRecordRepository.findAllBySaleOpportunity(saleOpportunity);
+            for (FollowUpRecord f:followUpRecords) {
+                if (f.getDeclare()== false){
+                    Map<String, String> map = new HashMap<>();
+                    map.put("message","Some records haven't been declre");
+                    return new ResponseEntity<>(map,HttpStatus.BAD_REQUEST);
+                }
+            }
+            saleOpportunity.setDeclare(true);
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "success");
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        }
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "saleOpportunity do not exist");
         return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
     }
 

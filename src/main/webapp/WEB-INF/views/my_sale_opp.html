@@ -75,6 +75,10 @@ Version: 2.0
                                     <th>
                                         客户名称
                                     </th>
+                                    <th>
+                                        完成
+                                    </th>
+
                                 </tr>
                                 </thead>
                                 <!--插入数据-->
@@ -89,6 +93,10 @@ Version: 2.0
                                     <td class="center" th:text="${manageSaleOpportunitiy.getCustomer().getName()}">
                                         power user
                                     </td>
+                                    <td>
+                                        <a href="javascript:;" class="complete">完成</a>
+                                    </td>
+
                                 </tr>
                                 </tbody>
                             </table>

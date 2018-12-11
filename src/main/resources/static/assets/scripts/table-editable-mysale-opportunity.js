@@ -237,6 +237,11 @@ var TableEditable = function () {
         table2.on('click', '.sonpage', function (e) {
             window.location.href="/followup?saleOpportunityId="+this.innerHTML;
         });
+        table2.on('click', '.complete', function (e) {
+            var nRow = $(this).parents('tr')[0];
+            //window.location.href="/finish?saleOpportunityId="+nRow.cells[0].innerText;
+            ajaxUpload("/sale_opportunity/complete","GET",{"saleOpportunityId":nRow.cells[0].innerText});
+        });
     }
 
     return {
