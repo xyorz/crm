@@ -70,20 +70,31 @@ public class SaleOpportunityController {
         return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping(path = "complete")
-    public ResponseEntity<Map<String,String>> finish(@RequestParam Integer saleOpportunityId){
-        Optional<SaleOpportunity> optionalSaleOpportunity = saleOpportunityRepository.findById(saleOpportunityId);
+    @PostMapping(path = "complete")
+    public ResponseEntity<Map<String,String>> complete(@RequestBody JSONObject jsonObject){
+
+        try{
+            jsonObject.getInt("saleOpportunityId");
+        }
+        catch (JSONException e){
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "data type error");
+            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<SaleOpportunity> optionalSaleOpportunity = saleOpportunityRepository.findById(jsonObject.getInt("saleOpportunityId"));
         if(optionalSaleOpportunity.isPresent()) {
             SaleOpportunity saleOpportunity = optionalSaleOpportunity.get();
             List<FollowUpRecord> followUpRecords = followUpRecordRepository.findAllBySaleOpportunity(saleOpportunity);
             for (FollowUpRecord f:followUpRecords) {
                 if (f.getDeclare()== false){
                     Map<String, String> map = new HashMap<>();
-                    map.put("message","Some records haven't been declre");
+                    map.put("message","Some records haven't been declred");
                     return new ResponseEntity<>(map,HttpStatus.BAD_REQUEST);
                 }
             }
             saleOpportunity.setDeclare(true);
+            saleOpportunityRepository.save(saleOpportunity);
             Map<String, String> map = new HashMap<>();
             map.put("message", "success");
             return new ResponseEntity<>(map, HttpStatus.OK);
