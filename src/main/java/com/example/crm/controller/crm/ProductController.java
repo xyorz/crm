@@ -69,7 +69,6 @@ public class ProductController {
         if(optionalProduct.isPresent()){
             Product prod = optionalProduct.get();
             prod.setName(product.getName());
-            prod.setVariety(product.getVariety());
             prod.setAmount(product.getAmount());
             prod.setPrice(product.getPrice());
             prod.setCost(product.getCost());
