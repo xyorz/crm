@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SaleOpportunityRepository extends CrudRepository<SaleOpportunity, Integer> {
-    List<SaleOpportunity> findAllByEmployee(Employee employee);
+    List<SaleOpportunity> findAllByEmployeeAndIsDeclareFalse(Employee employee);
     List<SaleOpportunity> findAllByFindEmployee(Employee findEmployee);
 }

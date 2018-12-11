@@ -42,7 +42,7 @@ public class SaleOpportunityController {
         ModelAndView mav = new ModelAndView("my_sale_opp");
         if(optionalEmployee.isPresent()){
             Employee employee = optionalEmployee.get();
-            List<SaleOpportunity> manageSaleOpportunities = saleOpportunityRepository.findAllByEmployee(employee);
+            List<SaleOpportunity> manageSaleOpportunities = saleOpportunityRepository.findAllByEmployeeAndIsDeclareFalse(employee);
             List<SaleOpportunity> findSaleOpportunities = saleOpportunityRepository.findAllByFindEmployee(employee);
             mav.addObject("manageSaleOpportunities", manageSaleOpportunities);
             mav.addObject("findSaleOpportunities", findSaleOpportunities);
