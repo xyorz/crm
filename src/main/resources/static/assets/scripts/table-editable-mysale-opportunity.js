@@ -17,8 +17,23 @@ var TableEditable = function () {
             var aData = oTable.fnGetData(nRow);
             var jqTds = $('>td', nRow);
             // jqTds[0].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[0] + '">';
-            jqTds[1].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[1] + '">';
-            jqTds[2].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[2] + '">';
+            // var d = $(nRow).children("#test").val();
+            jqTds[1].innerHTML = '<div class="input-group" style="overflow: visible;position: relative">\n' +
+                '                                      <input class="form-control input-small" type="text" id="pro" autocomplete="off" value="' + aData[1] + '" data-id alt>\n' +
+                '                                      <div>\n' +
+                '                                          <ul class="dropdown-menu dropdown-menu-right list-group" role="menu">\n' +
+                '                                          </ul>\n' +
+                '                                      </div>\n' +
+                '                                  </div>';
+            input_config_product();
+            jqTds[2].innerHTML = '<div class="input-group" style="overflow: visible;position: relative">\n' +
+                '                                      <input class="form-control input-small" type="text" id="cus" autocomplete="off" value="' + aData[2] + '" data-id alt>\n' +
+                '                                      <div>\n' +
+                '                                          <ul class="dropdown-menu dropdown-menu-right list-group" role="menu">\n' +
+                '                                          </ul>\n' +
+                '                                      </div>\n' +
+                '                                  </div>';
+            input_config_customer();
             jqTds[3].innerHTML = '<a class="edit" href="">保存</a>';
             jqTds[4].innerHTML = '<a class="cancel" href="">放弃</a>';
         }
@@ -26,8 +41,22 @@ var TableEditable = function () {
         function editRow1(oTable, nRow) {
             var aData = oTable.fnGetData(nRow);
             var jqTds = $('>td', nRow);
-            jqTds[1].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[1] + '">';
-            jqTds[2].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[2] + '">';
+            jqTds[1].innerHTML = '<div class="input-group" style="position: absolute">\n' +
+                '                                      <input class="form-control input-small" type="text" id="pro" autocomplete="off" value="' + aData[1] + '" data-id alt>\n' +
+                '                                      <div>\n' +
+                '                                          <ul class="dropdown-menu dropdown-menu-right list-group" role="menu">\n' +
+                '                                          </ul>\n' +
+                '                                      </div>\n' +
+                '                                  </div>';
+            input_config_product();
+            jqTds[2].innerHTML = '<div class="input-group" style="overflow: visible;position: absolute">\n' +
+                '                                      <input class="form-control input-small" type="text" id="cus" autocomplete="off" value="' + aData[2] + '" data-id alt>\n' +
+                '                                      <div>\n' +
+                '                                          <ul class="dropdown-menu dropdown-menu-right list-group" role="menu">\n' +
+                '                                          </ul>\n' +
+                '                                      </div>\n' +
+                '                                  </div>';
+            input_config_customer();
             jqTds[3].innerHTML = '<a class="edit" href="">保存</a>';
             jqTds[4].innerHTML = '<a class="cancel" href="">放弃</a>';
         }
@@ -216,7 +245,7 @@ var TableEditable = function () {
 
             if (nEditing !== null && nEditing != nRow) {
                 /* Currently editing - but not this row - restore the old before continuing to edit mode */
-                restoreRow(oTable, nEditing);
+                // restoreRow(oTable, nEditing);
                 editRow(oTable, nRow);
                 nEditing = nRow;
             } else if (nEditing == nRow && this.innerHTML == "保存") {
@@ -236,10 +265,6 @@ var TableEditable = function () {
         });
         table2.on('click', '.sonpage', function (e) {
             window.location.href="/followup?saleOpportunityId="+this.innerHTML;
-        });
-        table2.on('click', '.complete', function (e) {
-            var nRow = $(this).parents('tr')[0];
-            ajaxUpload("/sale_opportunity/complete","POST",{"saleOpportunityId":nRow.cells[0].innerText});
         });
     }
 

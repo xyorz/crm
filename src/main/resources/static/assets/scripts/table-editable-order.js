@@ -16,14 +16,35 @@ var TableEditable = function () {
         function editRow(oTable, nRow) {
             var aData = oTable.fnGetData(nRow);
             var jqTds = $('>td', nRow);
-            jqTds[1].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[1] + '">';
+            jqTds[1].innerHTML = '<div class="input-group">\n' +
+                '                                      <input class="form-control input-small" type="text" id="cus" autocomplete="off" value="' + aData[1] + '" data-id alt>\n' +
+                '                                      <div style="position: fixed;z-index: 2">\n' +
+                '                                          <ul class="dropdown-menu dropdown-menu-right list-group" role="menu">\n' +
+                '                                          </ul>\n' +
+                '                                      </div>\n' +
+                '                                  </div>';
+            input_config_customer();
             jqTds[2].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[2] + '">';
-            jqTds[3].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[3] + '">';
+            jqTds[3].innerHTML = '<div class="input-group">\n' +
+                '                                      <input class="form-control input-small" type="text" id="pro" autocomplete="off" value="' + aData[3] + '" data-id alt>\n' +
+                '                                      <div style="position: fixed;z-index: 2">\n' +
+                '                                          <ul class="dropdown-menu dropdown-menu-right list-group" role="menu">\n' +
+                '                                          </ul>\n' +
+                '                                      </div>\n' +
+                '                                  </div>';
+            input_config_product();
             jqTds[4].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[4] + '">';
             jqTds[5].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[5] + '">';
             jqTds[6].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[6] + '">';
             jqTds[7].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[7] + '">';
-            jqTds[8].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[8] + '">';
+            jqTds[8].innerHTML = '<div class="input-group">\n' +
+                '                                      <input class="form-control input-small" type="text" id="emp" autocomplete="off" value="' + aData[8] + '" data-id alt>\n' +
+                '                                      <div style="position: fixed;z-index: 2">\n' +
+                '                                          <ul class="dropdown-menu dropdown-menu-right list-group" role="menu">\n' +
+                '                                          </ul>\n' +
+                '                                      </div>\n' +
+                '                                  </div>';
+            input_config_employee();
             jqTds[9].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[9] + '">';
             jqTds[10].innerHTML = '<a class="edit" href="">保存</a>';
             jqTds[11].innerHTML = '<a class="cancel" href="">放弃</a>';

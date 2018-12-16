@@ -37,6 +37,22 @@ public class CustomerController {
         return "customer_analysis";
     }
 
+    @GetMapping("list")
+    public ResponseEntity<Map<String, Object>> list(){
+        Iterable<Customer> iterable = customerRepository.findAll();
+        List<Map<String, String>> cusInfoList = new ArrayList<>();
+        for(Customer cus : iterable){
+            Map<String, String> cusMap = new HashMap<>();
+            cusMap.put("id", cus.getId().toString());
+            cusMap.put("name", cus.getName());
+            cusMap.put("tel", cus.getTel());
+            cusInfoList.add(cusMap);
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("value", cusInfoList);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
     @PostMapping(path = "")
     public ResponseEntity<Map<String, String>> add(@RequestBody Customer customer) {
         if (customerRepository.findByName(customer.getName()).isPresent()){

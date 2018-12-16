@@ -36,6 +36,23 @@ public class ProductController {
         return mav;
     }
 
+    @GetMapping("list")
+    public ResponseEntity<Map<String, Object>> list(){
+        Iterable<Product> iterable = productRepository.findAll();
+        List<Map<String, String>> cusInfoList = new ArrayList<>();
+        for(Product cus : iterable){
+            Map<String, String> proMap = new HashMap<>();
+            proMap.put("id", cus.getId().toString());
+            proMap.put("variety", cus.getVariety());
+            proMap.put("price", Float.toString(cus.getPrice()));
+            cusInfoList.add(proMap);
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("value", cusInfoList);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+
     @GetMapping("manage")
     public ModelAndView productManage(@RequestParam Integer id, HttpServletRequest request){
         HttpSession session = request.getSession();

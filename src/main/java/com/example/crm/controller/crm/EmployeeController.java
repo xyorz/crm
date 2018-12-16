@@ -1,8 +1,11 @@
 package com.example.crm.controller.crm;
 
+import com.example.crm.entity.Customer;
 import com.example.crm.entity.Employee;
 import com.example.crm.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -15,6 +18,22 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @GetMapping("list")
+    public ResponseEntity<Map<String, Object>> list(){
+        Iterable<Employee> iterable = employeeRepository.findAll();
+        List<Map<String, String>> cusInfoList = new ArrayList<>();
+        for(Employee cus : iterable){
+            Map<String, String> empMap = new HashMap<>();
+            empMap.put("id", cus.getId().toString());
+            empMap.put("name", cus.getName());
+            empMap.put("tel", cus.getTel());
+            cusInfoList.add(empMap);
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("value", cusInfoList);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
 
     @GetMapping("")
     public ModelAndView employees(){
