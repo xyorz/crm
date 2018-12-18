@@ -4,6 +4,7 @@ package com.example.crm.entity;
 import org.springframework.stereotype.Controller;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Entity
@@ -32,6 +33,9 @@ public class Employee {
 
     @Column(nullable = false)
     private Integer level;
+
+    @ManyToMany()
+    private List<Customer> customers;
 
     public Employee() {
     }
@@ -108,5 +112,13 @@ public class Employee {
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    public List<Customer> getCustomers() {
+        return customers;
+    }
+
+    public void setCustomers(List<Customer> customers) {
+        this.customers = customers;
     }
 }

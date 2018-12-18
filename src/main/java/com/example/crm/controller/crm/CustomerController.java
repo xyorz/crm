@@ -1,7 +1,9 @@
 package com.example.crm.controller.crm;
 
 import com.example.crm.entity.Customer;
+import com.example.crm.entity.Employee;
 import com.example.crm.repository.CustomerRepository;
+import com.example.crm.repository.EmployeeRepository;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @Controller
@@ -19,11 +23,18 @@ public class CustomerController {
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
+    @Autowired
+    private HttpServletRequest httpServletRequest;
 
     @GetMapping("")
     public ModelAndView customers(){
         ModelAndView mav = new ModelAndView("customer");
-        mav.addObject("customers", customerRepository.findAll());
+        //通过session来获取员工ID
+        HttpSession httpSession = httpServletRequest.getSession();
+        Integer employeeid =(Integer) httpSession.getAttribute("id");
+        mav.addObject("customers",employeeRepository.queryById(employeeid));
         return mav;
     }
 
@@ -39,7 +50,9 @@ public class CustomerController {
 
     @GetMapping("list")
     public ResponseEntity<Map<String, Object>> list(){
-        Iterable<Customer> iterable = customerRepository.findAll();
+        HttpSession httpSession = httpServletRequest.getSession();
+        Integer employeeid =(Integer) httpSession.getAttribute("id");
+        Iterable<Customer> iterable = employeeRepository.queryById(employeeid);
         List<Map<String, String>> cusInfoList = new ArrayList<>();
         for(Customer cus : iterable){
             Map<String, String> cusMap = new HashMap<>();
@@ -62,6 +75,15 @@ public class CustomerController {
         }
         customerRepository.save(customer);
 
+        HttpSession httpSession = httpServletRequest.getSession();
+        Integer employeeid =(Integer) httpSession.getAttribute("id");
+        Optional<Employee>  employeeOptional = employeeRepository.findById(employeeid);
+        Employee employee = employeeOptional.get();
+        List<Customer> customerList = employee.getCustomers();
+        customerList.add(customer);
+        employee.setCustomers(customerList);
+        employeeRepository.save(employee);
+
         Map<String, String> map = new HashMap<>();
         map.put("message", "success");
         return new ResponseEntity<>(map, HttpStatus.OK);
@@ -69,6 +91,7 @@ public class CustomerController {
 
     @PostMapping(path = "update")
     public ResponseEntity<Map<String, String>> update(@RequestBody Customer customer) {
+
         Optional<Customer> optionalCustomer = customerRepository.findById(customer.getId());
         if(optionalCustomer.isPresent()){
             Customer cus = optionalCustomer.get();
@@ -113,6 +136,15 @@ public class CustomerController {
         Optional<Customer> optionalCustomer = customerRepository.findById(jsonObject.getInt("id"));
         if(optionalCustomer.isPresent()){
             customerRepository.delete(optionalCustomer.get());
+
+            HttpSession httpSession = httpServletRequest.getSession();
+            Integer employeeid =(Integer) httpSession.getAttribute("id");
+            Optional<Employee>  employeeOptional = employeeRepository.findById(employeeid);
+            Employee employee = employeeOptional.get();
+            List<Customer> customerList = employee.getCustomers();
+            customerList.remove(optionalCustomer.get());
+            employee.setCustomers(customerList);
+            employeeRepository.save(employee);
 
             Map<String, String> map = new HashMap<>();
             map.put("message", "success");
