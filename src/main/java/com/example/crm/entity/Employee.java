@@ -4,14 +4,10 @@ package com.example.crm.entity;
 import org.springframework.stereotype.Controller;
 
 import javax.persistence.*;
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-=======
-import java.util.List;
->>>>>>> 9fc40899b01d3a8a60fd244c5d2691420de05bd5
 
 
 @Entity
@@ -54,9 +50,6 @@ public class Employee {
 
     @Column(nullable = false)
     private Integer level;
-
-    @ManyToMany()
-    private List<Customer> customers;
 
     public Employee() {
     }
@@ -141,13 +134,5 @@ public class Employee {
 
     public void setLevel(Integer level) {
         this.level = level;
-    }
-
-    public List<Customer> getCustomers() {
-        return customers;
-    }
-
-    public void setCustomers(List<Customer> customers) {
-        this.customers = customers;
     }
 }

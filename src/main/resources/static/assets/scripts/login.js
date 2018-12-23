@@ -27,7 +27,6 @@ var Login = function () {
                 }
             },
 
-<<<<<<< HEAD
 
             invalidHandler: function (event, validator) { //display error alert on form submit
                 $('.alert-danger1', $('.login-form')).show();
@@ -54,32 +53,6 @@ var Login = function () {
             }
         });
 
-=======
-            invalidHandler: function (event, validator) { //display error alert on form submit
-                $('.alert-danger1', $('.login-form')).show();
-                $('.alert-danger2', $('.login-form')).hide();
-            },
-
-            highlight: function (element) { // hightlight error inputs
-                $(element)
-                    .closest('.form-group').addClass('has-error'); // set error class to the control group
-            },
-
-            success: function (label) {
-                label.closest('.form-group').removeClass('has-error');
-                label.remove();
-            },
-
-            errorPlacement: function (error, element) {
-                error.insertAfter(element.closest('.input-icon'));
-            },
-
-            submitHandler: function (form) {
-                form.submit();
-            }
-        });
-
->>>>>>> 9fc40899b01d3a8a60fd244c5d2691420de05bd5
         $('.login-form input').keypress(function (e) {
             if (e.which === 13) {
                 if ($('.login-form').validate().form()) {
@@ -92,6 +65,7 @@ var Login = function () {
     return {
         //main function to initiate the module
         init: function () {
+        	
             handleLogin();
         }
 
