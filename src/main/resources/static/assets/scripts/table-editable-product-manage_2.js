@@ -22,11 +22,11 @@ var TableEditable = function () {
         function saveRow(nRow) {
             var jqInputs = $('input', nRow);
             var jqTds = $('>td', nRow);
-            jqTds[2].innerHTML = jqInputs[0].value;
-            jqTds[3].innerHTML = jqInputs[1].value;
-            jqTds[4].innerHTML = jqInputs[2].value;
-            jqTds[5].innerHTML = jqInputs[3].value;
-            jqTds[6].innerHTML = '<a class="edit" href="">编辑</a>'
+            jqTds[2].innerHTML=jqInputs[0].value;
+            jqTds[3].innerHTML=jqInputs[1].value;
+            jqTds[4].innerHTML=jqInputs[2].value;
+            jqTds[5].innerHTML=jqInputs[3].value;
+            jqTds[6].innerHTML='<a class="edit" href="">编辑</a>'
         }
 
         function gatherRowData(nRow){
@@ -34,15 +34,33 @@ var TableEditable = function () {
             var c0V = $(nRow).children("td").eq(0).text();
             if(c0V === ""||c0V===null) action_type = "add";
             else action_type = "update";
-            var c1V = jqInputs[0].value;
-            var c2V = jqInputs[1].value;
-            var c3V = jqInputs[2].value;
-            var c4V = jqInputs[3].value;
+            var c1V = nRow.cells[2].innerText;
+            var c2V = jqInputs[0].value;
+            var c3V = jqInputs[1].value;
+            var c4V = jqInputs[2].value;
+            var c5V = jqInputs[3].value;
+
+            if(!check_null([c1V, c2V, c3V, c4V, c5V])){
+                alert("请完整填写数据");
+                return null;
+            }
+            if(!isNumber(c2V)){
+                alert("产品数量必须是数字");
+                return null;
+            }
+            if(!isNumber(c3V)) {
+                alert("市场价格必须是数字");
+                return null;
+            }
+            if(!isNumber(c4V)) {
+                alert("产品成本必须是数字");
+                return null;
+            }
+
             if(action_type === "add"){
-               var c5V = jqInputs[4].value;
                return {"id": c0V, 'variety': c1V, "amount": c2V, "price": c3V, "cost": c4V, "analysis": c5V};
             }
-            return {"id": c0V, "amount": c1V, "price": c2V, "cost": c3V, "analysis": c4V};
+            return {"id": c0V, "amount": c2V, "price": c3V, "cost": c4V, "analysis": c5V};
         }
 
         function ajaxUpload(url, method, data) {
@@ -57,7 +75,11 @@ var TableEditable = function () {
                     location.reload();
                 },
                 error: function (result) {
-                    alert(result.responseText);
+                    try{
+                        alert(result['responseJSON']['message']);
+                    }catch (e) {
+                        alert(result.responseText);
+                    }
                     location.reload();
                 }
             })
@@ -110,19 +132,20 @@ var TableEditable = function () {
             /* Get the row as a parent of the link that was clicked on */
            if (nEditing == nRow && this.innerHTML == "保存") {
                 /* Editing this row and want to save it */
-                var data = gatherRowData(nEditing);
                 var url = null;
+                var d = gatherRowData(nEditing);
+                if(d === null) return;
                 if(action_type==="add") url = "/product";
                 else url = "/product/update";
-                ajaxUpload(url, "POST", data);
+                ajaxUpload(url, "POST", d);
                saveRow(nEditing);
                 nEditing = null;
             } else {
                 /* No edit in progress - let's start one */
-               // data[0]= nRow.cells[2].innerText;
-               // data[1]= nRow.cells[3].innerText;
-               // data[2]= nRow.cells[4].innerText;
-               // data[3]= nRow.cells[5].innerText;
+               data[0]= nRow.cells[2].innerText;
+               data[1]= nRow.cells[3].innerText;
+               data[2]= nRow.cells[4].innerText;
+               data[3]= nRow.cells[5].innerText;
                 editRow1(nRow);
                 nEditing = nRow;
             }

@@ -1,6 +1,7 @@
 package com.example.crm.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,9 +13,30 @@ public class Customer {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    //  重写equals， 为了能正确使用集合的contains方法
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Customer))
+            return false;
+        return ((Customer) obj).getId().equals(this.id);
+    }
+
+    //  统一哈希码， 为了使用Set的contains方法
+    @Override
+    public int hashCode() {
+        return 3154;
+    }
+
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id")
     private List<LinkMan> linkMen;
+
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    private List<Employee> employees = new ArrayList<>();
+
+//    @OneToMany
+//    @JoinColumn(name = "managed_employee_id")
+//    private List<Employee> employees;
 
     @Column(nullable = false)
     private String tel;
@@ -22,7 +44,6 @@ public class Customer {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
     private String text;
 
     @Column(nullable = false)

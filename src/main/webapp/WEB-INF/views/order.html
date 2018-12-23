@@ -32,7 +32,7 @@ Version: 2.0
                 <ul class="page-breadcrumb">
                     <li>
                         <i class="fa fa-home"></i>
-                        <a href="index.html">首页</a>
+                        <a href="index.html" th:href="@{/}">首页</a>
                         <i class="fa fa-angle-right"></i>
                     </li>
                     <li>
@@ -99,9 +99,6 @@ Version: 2.0
                                         发票状态
                                     </th>
                                     <th>
-                                        员工编号
-                                    </th>
-                                    <th>
                                         售后记录
                                     </th>
                                     <th>
@@ -121,7 +118,7 @@ Version: 2.0
                                     <td th:text="${order.getCustomer().getId()}">
                                         Alex Nilson
                                     </td>
-                                    <td th:text="${order.getDate()}">
+                                    <td th:text="${order.getDate().toString().split(' ')[0]}">
                                         1234
                                     </td>
                                     <td class="center" th:text="${order.getProduct().getId()}">
@@ -133,13 +130,10 @@ Version: 2.0
                                     <td th:text="${order.getPaidValue()}">
                                         Alex Nilson
                                     </td>
-                                    <td th:text="${order.getStatus()}">
+                                    <td th:text="${order.isStatus()}? '已完成' : '未完成'">
                                         Alex Nilson
                                     </td>
-                                    <td th:text="${order.getReceiptStatus()}">
-                                        Alex Nilson
-                                    </td>
-                                    <td th:text="${order.getEmployee().getId()}">
+                                    <td th:text="${order.isReceiptStatus()}? '已开具': '未开具'">
                                         Alex Nilson
                                     </td>
                                     <td th:text="${order.getRecord()}">

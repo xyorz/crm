@@ -18,22 +18,22 @@ var TableEditable = function () {
             var jqTds = $('>td', nRow);
             // jqTds[0].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[0] + '">';
             // var d = $(nRow).children("#test").val();
-            jqTds[1].innerHTML = '<div class="input-group" style="overflow: visible;position: relative">\n' +
+            jqTds[1].innerHTML = '<div class="input-group">\n' +
                 '                                      <input class="form-control input-small" type="text" id="pro" autocomplete="off" value="' + aData[1] + '" data-id alt>\n' +
-                '                                      <div>\n' +
+                '                                      <div style="position: fixed;z-index: 2">\n' +
                 '                                          <ul class="dropdown-menu dropdown-menu-right list-group" role="menu">\n' +
                 '                                          </ul>\n' +
                 '                                      </div>\n' +
                 '                                  </div>';
-            input_config_product();
-            jqTds[2].innerHTML = '<div class="input-group" style="overflow: visible;position: relative">\n' +
+            input_config_product("id", true);
+            jqTds[2].innerHTML = '<div class="input-group">\n' +
                 '                                      <input class="form-control input-small" type="text" id="cus" autocomplete="off" value="' + aData[2] + '" data-id alt>\n' +
-                '                                      <div>\n' +
+                '                                      <div style="position: fixed;z-index: 2">\n' +
                 '                                          <ul class="dropdown-menu dropdown-menu-right list-group" role="menu">\n' +
                 '                                          </ul>\n' +
                 '                                      </div>\n' +
                 '                                  </div>';
-            input_config_customer();
+            input_config_customer("name");
             jqTds[3].innerHTML = '<a class="edit" href="">保存</a>';
             jqTds[4].innerHTML = '<a class="cancel" href="">放弃</a>';
         }
@@ -41,22 +41,22 @@ var TableEditable = function () {
         function editRow1(oTable, nRow) {
             var aData = oTable.fnGetData(nRow);
             var jqTds = $('>td', nRow);
-            jqTds[1].innerHTML = '<div class="input-group" style="position: absolute">\n' +
+            jqTds[1].innerHTML = '<div class="input-group">\n' +
                 '                                      <input class="form-control input-small" type="text" id="pro" autocomplete="off" value="' + aData[1] + '" data-id alt>\n' +
-                '                                      <div>\n' +
+                '                                      <div style="position: fixed;z-index: 2">\n' +
                 '                                          <ul class="dropdown-menu dropdown-menu-right list-group" role="menu">\n' +
                 '                                          </ul>\n' +
                 '                                      </div>\n' +
                 '                                  </div>';
-            input_config_product();
-            jqTds[2].innerHTML = '<div class="input-group" style="overflow: visible;position: absolute">\n' +
+            input_config_product("id", true);
+            jqTds[2].innerHTML = '<div class="input-group">\n' +
                 '                                      <input class="form-control input-small" type="text" id="cus" autocomplete="off" value="' + aData[2] + '" data-id alt>\n' +
-                '                                      <div>\n' +
+                '                                      <div style="position: fixed;z-index: 2">\n' +
                 '                                          <ul class="dropdown-menu dropdown-menu-right list-group" role="menu">\n' +
                 '                                          </ul>\n' +
                 '                                      </div>\n' +
                 '                                  </div>';
-            input_config_customer();
+            input_config_customer("name");
             jqTds[3].innerHTML = '<a class="edit" href="">保存</a>';
             jqTds[4].innerHTML = '<a class="cancel" href="">放弃</a>';
         }
@@ -96,6 +96,19 @@ var TableEditable = function () {
             var c1V = $.trim(jqInputs[0].value).split(" ");
             var c2V = jqInputs[1].value;
             var current_id = $("#current_employee_id").attr("value");
+
+            if(!check_null([c1V, c2V, current_id])){
+                alert("请完整填写数据");
+                return null;
+            }
+
+            for(var i = 0; i < c1V.length; i++){
+                if(!isNumber(c1V[i])){
+                    alert("订单产品编号必须全部为数字");
+                    return;
+                }
+            }
+
             return {"id": c0V, "productIds": c1V, "customerName": c2V, "findEmployeeId": current_id};
         }
 
@@ -111,7 +124,11 @@ var TableEditable = function () {
                     location.reload();
                 },
                 error: function (result) {
-                    alert(result.responseText);
+                    try{
+                        alert(result['responseJSON']['message']);
+                    }catch (e) {
+                        alert(result.responseText);
+                    }
                     location.reload();
                 }
             })
@@ -181,28 +198,18 @@ var TableEditable = function () {
 
         $('#sample_editable_1_new').click(function (e) {
             e.preventDefault();
-
-            if (nNew && nEditing) {
-                if (confirm("存在数据没有保存，是否保存？")) {
-                    saveRow(oTable, nEditing); // save
-                    $(nEditing).find("td:first").html("Untitled");
-                    nEditing = null;
-                    nNew = false;
-
-                } else {
-                    oTable.fnDeleteRow(nEditing); // cancel
-                    nEditing = null;
-                    nNew = false;
-
-                    return;
-                }
+            if(nNew==false && nEditing==null)
+            {
+                var aiNew = oTable.fnAddData(['', '','', '','']);
+                var nRow = oTable.fnGetNodes(aiNew[0]);
+                editRow(oTable, nRow);
+                nEditing = nRow;
+                nNew = true;
             }
-
-            var aiNew = oTable.fnAddData(['', '', '', '', '']);
-            var nRow = oTable.fnGetNodes(aiNew[0]);
-            editRow(oTable, nRow);
-            nEditing = nRow;
-            nNew = true;
+            else
+            {
+                alert("请先保存之前的信息");
+            }
         });
 
         table.on('click', '.delete', function (e) {
@@ -231,6 +238,7 @@ var TableEditable = function () {
             if (nNew) {
                 oTable.fnDeleteRow(nEditing);
                 nNew = false;
+                nEditing = null;
             } else {
                 restoreRow(oTable, nEditing);
                 nEditing = null;
@@ -245,12 +253,19 @@ var TableEditable = function () {
 
             if (nEditing !== null && nEditing != nRow) {
                 /* Currently editing - but not this row - restore the old before continuing to edit mode */
-                // restoreRow(oTable, nEditing);
+                if(nNew==true) {
+                    oTable.fnDeleteRow(nEditing);
+                }
+                else {
+                    restoreRow(oTable, nEditing);
+                }
                 editRow(oTable, nRow);
+                nNew = false;
                 nEditing = nRow;
             } else if (nEditing == nRow && this.innerHTML == "保存") {
                 /* Editing this row and want to save it */
                 var data = gatherRowData(nEditing);
+                if(data === null) return;
                 var url = null;
                 if(action_type==="add") url = "/sale_opportunity";
                 else url = "/sale_opportunity/update";
@@ -263,10 +278,14 @@ var TableEditable = function () {
                 nEditing = nRow;
             }
         });
+        $(".complete").click(function () {
+            ajaxUpload("/sale_opportunity/complete", "POST", {"saleOpportunityId": $(this).parent().parent().children("td").eq(0).text()});
+        });
         table2.on('click', '.sonpage', function (e) {
             window.location.href="/followup?saleOpportunityId="+this.innerHTML;
         });
-    }
+    };
+
 
     return {
 

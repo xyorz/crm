@@ -28,6 +28,7 @@
     <link href="/assets/css/custom.css" rel="stylesheet" type="text/css"/>
     <!-- END THEME STYLES -->
     <link rel="shortcut icon" href="/favicon.ico"/>
+    <script src="/assets/scripts/data-check-util.js"></script>
     <style>
         .table-scrollable{
             /*overflow: visible;*/
@@ -69,7 +70,7 @@
                 </a>
                 <ul class="dropdown-menu extended notification">
                     <li class="external">
-                        <a href="#">See all notifications <i class="fa fa-angle-right"></i></a>
+                        <a href="#">查看所有通知 <i class="fa fa-angle-right"></i></a>
                     </li>
                 </ul>
             </li>
@@ -83,7 +84,7 @@
                 </a>
                 <ul class="dropdown-menu extended inbox">
                     <li class="external">
-                        <a href="inbox.html">See all messages <i class="fa fa-angle-right"></i></a>
+                        <a href="#">查看所有消息 <i class="fa fa-angle-right"></i></a>
                     </li>
                 </ul>
             </li>
@@ -97,7 +98,7 @@
                 </a>
                 <ul class="dropdown-menu extended tasks">
                     <li class="external">
-                        <a href="#">See all tasks <i class="fa fa-angle-right"></i></a>
+                        <a href="#">查看所有任务 <i class="fa fa-angle-right"></i></a>
                     </li>
                 </ul>
             </li>
@@ -114,14 +115,14 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a href="#"><i class="fa fa-tasks"></i> My Tasks <span class="badge badge-success">
+                        <a href="#"><i class="fa fa-tasks"></i> 我的信息 <span class="badge badge-success">
 						7 </span>
                         </a>
                     </li>
                     <li class="divider">
                     </li>
                     <li>
-                        <a href="login.html" th:href="@{/logout}"><i class="fa fa-key"></i> Log Out</a>
+                        <a href="login.html" th:href="@{/logout}"><i class="fa fa-key"></i> 登出</a>
                     </li>
                 </ul>
             </li>
@@ -175,10 +176,6 @@
                     <li>
                         <a href="customer_share.html" th:href="@{/customer/share}">
                             客户共享</a>
-                    </li>
-                    <li>
-                        <a href="customer_analysis.html" th:href="@{/customer/analysis}">
-                            客户统计分析</a>
                     </li>
                 </ul>
             </li>

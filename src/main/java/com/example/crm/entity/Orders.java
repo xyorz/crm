@@ -22,10 +22,10 @@ public class Orders {
     private Product product;
 
     @Column(nullable = false)
-    private String status;
+    private boolean status;
 
     @Column(nullable = false)
-    private String receiptStatus;
+    private boolean receiptStatus;
 
     @Column(nullable = false)
     private Date date;
@@ -42,7 +42,7 @@ public class Orders {
     public Orders() {
     }
 
-    public Orders(Customer customer, Employee employee, Product product, String status, String receiptStatus, Date date, float value, float paidValue, String record) {
+    public Orders(Customer customer, Employee employee, Product product, boolean status, boolean receiptStatus, Date date, float value, float paidValue, String record) {
         this.customer = customer;
         this.employee = employee;
         this.product = product;
@@ -86,19 +86,19 @@ public class Orders {
         this.product = product;
     }
 
-    public String getStatus() {
+    public boolean isStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 
-    public String getReceiptStatus() {
+    public boolean isReceiptStatus() {
         return receiptStatus;
     }
 
-    public void setReceiptStatus(String receiptStatus) {
+    public void setReceiptStatus(boolean receiptStatus) {
         this.receiptStatus = receiptStatus;
     }
 

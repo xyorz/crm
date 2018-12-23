@@ -26,9 +26,7 @@ public class ProductController {
     private OrderRepository orderRepository;
 
     @GetMapping("")
-    public ModelAndView products(HttpServletRequest request){
-        HttpSession session = request.getSession();
-        Integer level = (Integer) session.getAttribute("level");
+    public ModelAndView products(@SessionAttribute Integer level){
         ModelAndView mav = new ModelAndView();
         if(level == 0) mav.setViewName("product");
         else mav.setViewName("product_manage");
@@ -47,16 +45,14 @@ public class ProductController {
             proMap.put("price", Float.toString(cus.getPrice()));
             cusInfoList.add(proMap);
         }
-        Map<String, Object> map = new HashMap<>();
-        map.put("value", cusInfoList);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("value", cusInfoList);
+        return new ResponseEntity<>(responseMap, HttpStatus.OK);
     }
 
 
     @GetMapping("manage")
-    public ModelAndView productManage(@RequestParam Integer id, HttpServletRequest request){
-        HttpSession session = request.getSession();
-        Integer level = (Integer) session.getAttribute("level");
+    public ModelAndView productManage(@RequestParam Integer id, @SessionAttribute Integer level){
         ModelAndView mav = new ModelAndView();
         if(level >= 1) {
             mav.setViewName("product_manage_2");
@@ -73,15 +69,26 @@ public class ProductController {
     }
 
     @PostMapping(path = "")
-    public ResponseEntity<Map<String, String>> add(@RequestBody Product product) {
+    public ResponseEntity<Map<String, String>> add(@RequestBody Product product, @SessionAttribute Integer level) {
+        Map<String, String> responseMap = new HashMap<>();
+        if(level < 1){
+            responseMap.put("message", "权限不足");
+            return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+        }
         productRepository.save(product);
-        Map<String, String> map = new HashMap<>();
-        map.put("message", "success");
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        responseMap.put("message", "添加成功");
+        return new ResponseEntity<>(responseMap, HttpStatus.OK);
     }
 
     @PostMapping(path = "update")
-    public ResponseEntity<Map<String, String>> update(@RequestBody Product product) {
+    public ResponseEntity<Map<String, String>> update(@RequestBody Product product, @SessionAttribute Integer level) {
+        Map<String, String> responseMap = new HashMap<>();
+
+        if(level < 1){
+            responseMap.put("message", "权限不足");
+            return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+        }
+
         Optional<Product> optionalProduct = productRepository.findById(product.getId());
         if(optionalProduct.isPresent()){
             Product prod = optionalProduct.get();
@@ -90,14 +97,12 @@ public class ProductController {
             prod.setPrice(product.getPrice());
             prod.setCost(product.getCost());
             prod.setAnalysis(product.getAnalysis());
-            productRepository.save(product);
+            productRepository.save(prod);
 
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "success");
-            return new ResponseEntity<>(map, HttpStatus.OK);
+            responseMap.put("message", "修改成功");
+            return new ResponseEntity<>(responseMap, HttpStatus.OK);
         }
-        Map<String, String> map = new HashMap<>();
-        map.put("message", "product do not exist");
-        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        responseMap.put("message", "产品不存在");
+        return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
     }
 }

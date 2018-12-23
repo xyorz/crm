@@ -60,6 +60,39 @@ var TableManaged = function () {
             jQuery.uniform.update(set);
         });
 
+        function gatherRowData(nRow){
+            var cid = nRow.cells[0].innerText;
+            var eid = nRow.cells[2].innerText;
+
+            if(!check_null([cid, eid])){
+                alert("请完整填写数据");
+                return null;
+            }
+
+            return {"customerId": cid, "employeeId": eid};
+        }
+
+        function ajaxUpload(url, method, data) {
+            $.ajax({
+                type: method,
+                url: url,
+                data: data,
+                async: false,
+                contentType:"application/json",
+                success: function(result){
+                    alert(result.message);
+                    location.reload();
+                },
+                error: function (result) {
+                    try{
+                        alert(result['responseJSON']['message']);
+                    }catch (e) {
+                        alert(result.responseText);
+                    }
+                    location.reload();
+                }
+            })
+        }
 
         table.on('click','.share', function () {
             var nRow = $(this).parents('tr')[0];
@@ -68,7 +101,11 @@ var TableManaged = function () {
             }
             else
             {
-                window.location.href = "index.html?cid=" + nRow.cells[0].innerText + "&&eid=" + nRow.cells[2].innerText;
+                var url = "/customer/shareCustomer";
+                var d = gatherRowData(nRow);
+                if(d === null) return;
+                ajaxUpload(url, "GET", d);
+                window.location.href = "/";
             }
         });
 

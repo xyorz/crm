@@ -19,9 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.zip.DataFormatException;
 
 @Controller
 @RequestMapping(path = "followup")
@@ -47,78 +45,97 @@ public class FollowUpRecordController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Map<String, String>> add(@RequestBody JSONObject jsonObject) throws ParseException {
+    public ResponseEntity<Map<String, String>> add(@RequestBody JSONObject jsonObject,
+                                                   @SessionAttribute Employee loginEmployee) throws ParseException {
+        Map<String, String> responseMap = new HashMap<>();
         if(!jsonDataCheck(jsonObject)){
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "data type error");
-            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+            responseMap.put("message", "数据错误");
+            return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
         }
 
         Optional<SaleOpportunity> optionalSaleOpportunity = saleOpportunityRepository.findById(jsonObject.getInt("saleOpportunityId"));
         if(optionalSaleOpportunity.isPresent()){
             SaleOpportunity saleOpportunity = optionalSaleOpportunity.get();
+
+            if(!loginEmployee.getCustomers().contains(saleOpportunity.getCustomer())){
+                responseMap.put("message", "没有权限");
+                return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+            }
+
             String dateStr = jsonObject.getString("date");
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date date = sdf.parse(dateStr);
             FollowUpRecord followUpRecord = new FollowUpRecord(saleOpportunity, jsonObject.getString("record"), date, false);
             followUpRecordRepository.save(followUpRecord);
 
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "success");
-            return new ResponseEntity<>(map, HttpStatus.OK);
+            responseMap.put("message", "添加成功");
+            return new ResponseEntity<>(responseMap, HttpStatus.OK);
         }
 
-        Map<String, String> map = new HashMap<>();
-        map.put("message", "saleOpportunity do not exist");
-        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        responseMap.put("message", "销售机会编号已存在");
+        return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
     }
 
 
     @PostMapping("update")
-    public ResponseEntity<Map<String, String>> update(@RequestBody FollowUpRecord followUpRecord){
-
+    public ResponseEntity<Map<String, String>> update(@RequestBody FollowUpRecord followUpRecord,
+                                                      @SessionAttribute Employee loginEmployee){
+        Map<String, String> responseMap = new HashMap<>();
         Optional<FollowUpRecord> optionalUpRecord = followUpRecordRepository.findById(followUpRecord.getId());
         if(optionalUpRecord.isPresent()){
             FollowUpRecord fur = optionalUpRecord.get();
+
+            if(!loginEmployee.getCustomers().contains(fur.getSaleOpportunity().getCustomer())){
+                responseMap.put("message", "没有权限");
+                return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+            }
+
             fur.setDate(followUpRecord.getDate());
             fur.setDeclare(false);
             fur.setRecord(followUpRecord.getRecord());
             followUpRecordRepository.save(fur);
 
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "success");
-            return new ResponseEntity<>(map, HttpStatus.OK);
+            responseMap.put("message", "修改成功");
+            return new ResponseEntity<>(responseMap, HttpStatus.OK);
         }
 
         Map<String, String> map = new HashMap<>();
-        map.put("message", "followup did not exist");
+        map.put("message", "销售机会不存在");
         return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
     }
 
 
-    @PostMapping(path = "delete")
-    public ResponseEntity<Map<String, String>> delete(@RequestBody JSONObject jsonObject) {
+    @PostMapping(path = "declare")
+    public ResponseEntity<Map<String, String>> delete(@RequestBody JSONObject jsonObject, @SessionAttribute Employee loginEmployee) {
+        Map<String, String> responseMap = new HashMap<>();
         try{
             jsonObject.getInt("id");
         }
         catch (JSONException e){
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "data type error");
-            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+            responseMap.put("message", "数据错误");
+            return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
         }
 
         Optional<FollowUpRecord> optionalUpRecord = followUpRecordRepository.findById(jsonObject.getInt("id"));
         if(optionalUpRecord.isPresent()){
-            followUpRecordRepository.delete(optionalUpRecord.get());
 
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "success");
-            return new ResponseEntity<>(map, HttpStatus.OK);
+            FollowUpRecord followUpRecord = optionalUpRecord.get();
+
+            if(!loginEmployee.getCustomers().contains(followUpRecord.getSaleOpportunity().getCustomer())){
+                responseMap.put("message", "没有权限");
+                return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+            }
+
+            followUpRecord.setDeclare(true);
+
+            followUpRecordRepository.save(followUpRecord);
+
+            responseMap.put("message", "记录提交成功，等待审核");
+            return new ResponseEntity<>(responseMap, HttpStatus.OK);
         }
 
-        Map<String, String> map = new HashMap<>();
-        map.put("message", "customer did not exist");
-        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        responseMap.put("message", "客户不存在");
+        return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
     }
 
     private boolean jsonDataCheck(JSONObject jsonObject){
@@ -129,9 +146,22 @@ public class FollowUpRecordController {
             sdf.parse(jsonObject.getString("date"));
             jsonObject.getString("record");
             jsonObject.getInt("saleOpportunityId");
+            if(jsonObject.getString("record").equals(""))
+                return false;
         }catch (Exception e){
             return false;
         }
         return true;
     }
+
+//    private boolean dataCheck(FollowUpRecord followUpRecord){
+//        try {
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+////            sdf.parse(followUpRecord.getDate());
+//        }catch (Exception e){
+//
+//        }
+//
+////        if(followUpRecord.)
+//    }
 }

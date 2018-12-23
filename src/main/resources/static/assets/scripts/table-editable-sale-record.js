@@ -16,7 +16,7 @@ var TableEditable = function () {
         function editRow(oTable, nRow) {
             var aData = oTable.fnGetData(nRow);
             var jqTds = $('>td', nRow);
-            jqTds[0].innerHTML = '<input type="date" class="form-control input-medium" value="' + aData[0] + '">';
+            jqTds[0].innerHTML = '<input type="date" class="form-control" value="'+aData[0]+'">';
             jqTds[1].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[1] + '">';
             jqTds[3].innerHTML = '<a class="edit" href="">保存</a>';
             jqTds[4].innerHTML = '<a class="cancel" href="">放弃</a>';
@@ -47,6 +47,12 @@ var TableEditable = function () {
             var id_elem = $("#followup_id");
             var id = "";
             if(id_elem !== undefined) id = id_elem.attr("value");
+
+            if(!check_null([c0V, c1V])){
+                alert("请完整填写数据");
+                return null;
+            }
+
             return {"date": c0V, "record": c1V, "id": id, "saleOpportunityId": $("#sale_opportunity_id").attr("value")};
         }
 
@@ -62,7 +68,11 @@ var TableEditable = function () {
                     location.reload();
                 },
                 error: function (result) {
-                    alert(result.responseText);
+                    try{
+                        alert(result['responseJSON']['message']);
+                    }catch (e) {
+                        alert(result.responseText);
+                    }
                     location.reload();
                 }
             })
@@ -106,34 +116,24 @@ var TableEditable = function () {
 
         $('#sample_editable_1_new').click(function (e) {
             e.preventDefault();
-
-            if (nNew && nEditing) {
-                if (confirm("存在数据没有保存，是否保存？")) {
-                    saveRow(oTable, nEditing); // save
-                    $(nEditing).find("td:first").html("Untitled");
-                    nEditing = null;
-                    nNew = false;
-
-                } else {
-                    oTable.fnDeleteRow(nEditing); // cancel
-                    nEditing = null;
-                    nNew = false;
-
-                    return;
-                }
+            if(nNew==false && nEditing==null)
+            {
+                var aiNew = oTable.fnAddData(['', '', '', '', '', '']);
+                var nRow = oTable.fnGetNodes(aiNew[0]);
+                editRow(oTable, nRow);
+                nEditing = nRow;
+                nNew = true;
             }
-
-            var aiNew = oTable.fnAddData(['', '', '', '','']);
-            var nRow = oTable.fnGetNodes(aiNew[0]);
-            editRow(oTable, nRow);
-            nEditing = nRow;
-            nNew = true;
+            else
+            {
+                alert("请先保存之前的信息");
+            }
         });
 
         table.on('click', '.delete', function (e) {
             e.preventDefault();
 
-            if (confirm("是否删除此信息？") == false) {
+            if (confirm("是否确认申报？") == false) {
                 return;
             }
 
@@ -146,9 +146,8 @@ var TableEditable = function () {
                 delId = 0;
             }
 
-            ajaxUpload("/followup/delete", "POST", {"id": delId});
+            ajaxUpload("/followup/declare", "POST", {"id": delId});
 
-            oTable.fnDeleteRow(nRow);
         });
 
         table.on('click', '.cancel', function (e) {
@@ -156,6 +155,7 @@ var TableEditable = function () {
 
             if (nNew) {
                 oTable.fnDeleteRow(nEditing);
+                nEditing = null;
                 nNew = false;
             } else {
                 restoreRow(oTable, nEditing);
@@ -179,11 +179,13 @@ var TableEditable = function () {
                 var jqInputs = $('input', nEditing);
                 // if(jqInputs[])
                 var data = gatherRowData(nEditing);
+                if(data === null) return;
                 var url = null;
                 if(action_type==="add") url = "/followup";
                 else url = "followup/update";
                 ajaxUpload(url, "POST", data);
                 saveRow(oTable, nEditing);
+                nNew = false;
                 nEditing = null;
             } else {
                 /* No edit in progress - let's start one */

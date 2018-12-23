@@ -57,6 +57,15 @@ var TableEditable = function () {
             var c1V = jqInputs[0].value;
             var c2V = jqInputs[1].value;
             var customer_id = $("#customer_id").attr("value");
+            if(!check_null([c1V, c2V, customer_id])){
+                alert("请完整填写数据");
+                return null;
+            }
+            if(!isNumber(customer_id)){
+                alert("检查出错");
+                return null;
+            }
+
             return {"id": c0V, "name": c1V, "tel": c2V, "customer_id": customer_id};
         }
 
@@ -72,7 +81,11 @@ var TableEditable = function () {
                     location.reload();
                 },
                 error: function (result) {
-                    alert(result.responseText);
+                    try{
+                        alert(result['responseJSON']['message']);
+                    }catch (e) {
+                        alert(result.responseText);
+                    }
                     location.reload();
                 }
             })
@@ -116,28 +129,18 @@ var TableEditable = function () {
 
         $('#sample_editable_1_new').click(function (e) {
             e.preventDefault();
-
-            if (nNew && nEditing) {
-                if (confirm("存在数据没有保存，是否保存？")) {
-                    saveRow(oTable, nEditing); // save
-                    $(nEditing).find("td:first").html("Untitled");
-                    nEditing = null;
-                    nNew = false;
-
-                } else {
-                    oTable.fnDeleteRow(nEditing); // cancel
-                    nEditing = null;
-                    nNew = false;
-
-                    return;
-                }
+            if(nNew==false && nEditing==null)
+            {
+                var aiNew = oTable.fnAddData(['', '','', '','']);
+                var nRow = oTable.fnGetNodes(aiNew[0]);
+                editRow(oTable, nRow);
+                nEditing = nRow;
+                nNew = true;
             }
-
-            var aiNew = oTable.fnAddData(['', '','', '','']);
-            var nRow = oTable.fnGetNodes(aiNew[0]);
-            editRow(oTable, nRow);
-            nEditing = nRow;
-            nNew = true;
+            else
+            {
+                alert("请先保存之前的信息");
+            }
         });
 
         table.on('click', '.delete', function (e) {
@@ -148,13 +151,16 @@ var TableEditable = function () {
             }
 
             var delId = 0;
+            var customer_id = 0;
             try{
                 delId = $(this).parent().parent().children('td').eq(0).text();
+                customer_id = $("#customer_id").attr("value");
             }catch (e) {
                 delId = 0;
+                customer_id = 0;
             }
 
-            ajaxUpload("link_man/delete", "POST", {"id": delId});
+            ajaxUpload("link_man/delete", "POST", {"id": delId, "customer_id": customer_id});
 
             var nRow = $(this).parents('tr')[0];
             oTable.fnDeleteRow(nRow);
@@ -181,12 +187,19 @@ var TableEditable = function () {
             if (nEditing !== null && nEditing != nRow) {
                 /* Currently editing - but not this row - restore the old before continuing to edit mode */
 
-                restoreRow(oTable, nEditing);
+                if(nNew==true) {
+                    oTable.fnDeleteRow(nEditing);
+                }
+                else {
+                    restoreRow(oTable, nEditing);
+                }
                 editRow(oTable, nRow);
+                nNew = false;
                 nEditing = nRow;
             } else if (nEditing == nRow && this.innerHTML == "保存") {
                 /* Editing this row and want to save it */
                 var data = gatherRowData(nEditing);
+                if(data === null) return;
                 var url = null;
                 if(action_type==="add") url = "link_man";
                 else url = "link_man/update";

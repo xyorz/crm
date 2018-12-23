@@ -12,6 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @Controller
@@ -30,86 +33,95 @@ public class SaleOpportunityController {
     private FollowUpRecordRepository followUpRecordRepository;
 
     @GetMapping("")
-    public ModelAndView saleOpportunity(){
+    public ModelAndView saleOpportunity(@SessionAttribute Employee loginEmployee){
+
         ModelAndView mav = new ModelAndView("sale_opportunity");
-        mav.addObject("saleOpportunities", saleOpportunityRepository.findAll());
+        Set<Customer> manageCustomers = loginEmployee.getCustomers();
+        Iterable<SaleOpportunity> iterable = saleOpportunityRepository.findAll();
+        List<SaleOpportunity> resSaleOpportunities = new ArrayList<>();
+        for(SaleOpportunity saleOpportunity : iterable){
+            if(manageCustomers.contains(saleOpportunity.getCustomer()))
+                resSaleOpportunities.add(saleOpportunity);
+            mav.addObject("saleOpportunities", resSaleOpportunities);
+        }
         return mav;
     }
 
     @GetMapping("my_opp")
-    public ModelAndView mySaleOpp(@RequestParam Integer employeeId){
-        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
+    public ModelAndView mySaleOpp(@SessionAttribute Employee loginEmployee){
         ModelAndView mav = new ModelAndView("my_sale_opp");
-        if(optionalEmployee.isPresent()){
-            Employee employee = optionalEmployee.get();
-            List<SaleOpportunity> manageSaleOpportunities = saleOpportunityRepository.findAllByEmployeeAndIsDeclareFalse(employee);
-            List<SaleOpportunity> findSaleOpportunities = saleOpportunityRepository.findAllByFindEmployee(employee);
-            mav.addObject("manageSaleOpportunities", manageSaleOpportunities);
-            mav.addObject("findSaleOpportunities", findSaleOpportunities);
-        }
+        List<SaleOpportunity> manageSaleOpportunities = saleOpportunityRepository.findAllByEmployeeAndIsDeclareFalse(loginEmployee);
+        List<SaleOpportunity> findSaleOpportunities = saleOpportunityRepository.findAllByFindEmployee(loginEmployee);
+        mav.addObject("manageSaleOpportunities", manageSaleOpportunities);
+        mav.addObject("findSaleOpportunities", findSaleOpportunities);
         return mav;
     }
 
     @GetMapping(path = "gain")
-    public ResponseEntity<Map<String, String>> gain(@RequestParam Integer id, @RequestParam Integer employeeId){
+    public ResponseEntity<Map<String, String>> gain(@RequestParam Integer id, @SessionAttribute Employee loginEmployee){
+        Map<String, String> responseMap = new HashMap<>();
         Optional<SaleOpportunity> optionalSaleOpportunity = saleOpportunityRepository.findById(id);
-        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
-        if(optionalSaleOpportunity.isPresent() && optionalEmployee.isPresent()){
+        if(optionalSaleOpportunity.isPresent()){
             SaleOpportunity saleOpportunity = optionalSaleOpportunity.get();
-            Employee employee = optionalEmployee.get();
-            saleOpportunity.setEmployee(employee);
+
+            if(!loginEmployee.getCustomers().contains(saleOpportunity.getCustomer())){
+                responseMap.put("message", "没有权限");
+                return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+            }
+
+            saleOpportunity.setEmployee(loginEmployee);
             saleOpportunity.setFindEmployee(null);
             saleOpportunityRepository.save(saleOpportunity);
 
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "success");
-            return new ResponseEntity<>(map, HttpStatus.OK);
+            responseMap.put("message", "获取成功");
+            return new ResponseEntity<>(responseMap, HttpStatus.OK);
         }
-        Map<String, String> map = new HashMap<>();
-        map.put("message", "employee or saleOpportunity do not exist");
-        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        responseMap.put("message", "客户或员工不存在");
+        return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(path = "complete")
-    public ResponseEntity<Map<String,String>> complete(@RequestBody JSONObject jsonObject){
-
+    public ResponseEntity<Map<String,String>> complete(@RequestBody JSONObject jsonObject, @SessionAttribute Employee loginEmployee){
+        Map<String, String> responseMap = new HashMap<>();
         try{
             jsonObject.getInt("saleOpportunityId");
         }
-        catch (JSONException e){
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "data type error");
-            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        catch (JSONException e) {
+            responseMap.put("message", "数据错误");
+            return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
         }
 
         Optional<SaleOpportunity> optionalSaleOpportunity = saleOpportunityRepository.findById(jsonObject.getInt("saleOpportunityId"));
         if(optionalSaleOpportunity.isPresent()) {
             SaleOpportunity saleOpportunity = optionalSaleOpportunity.get();
+
+            if(!loginEmployee.getCustomers().contains(saleOpportunity.getCustomer())){
+                responseMap.put("message", "没有权限");
+                return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+            }
+
             List<FollowUpRecord> followUpRecords = followUpRecordRepository.findAllBySaleOpportunity(saleOpportunity);
             for (FollowUpRecord f:followUpRecords) {
-                if (f.getDeclare()== false){
-                    Map<String, String> map = new HashMap<>();
-                    map.put("message","Some records haven't been declred");
-                    return new ResponseEntity<>(map,HttpStatus.BAD_REQUEST);
+                if (!f.getDeclare()){
+                    responseMap.put("message","存在未申报的记录");
+                    return new ResponseEntity<>(responseMap,HttpStatus.BAD_REQUEST);
                 }
             }
             saleOpportunity.setDeclare(true);
             saleOpportunityRepository.save(saleOpportunity);
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "success");
-            return new ResponseEntity<>(map, HttpStatus.OK);
+            responseMap.put("message", "成功");
+            return new ResponseEntity<>(responseMap, HttpStatus.OK);
         }
-        Map<String, String> map = new HashMap<>();
-        map.put("message", "saleOpportunity do not exist");
-        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        responseMap.put("message", "销售机会不存在");
+        return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(path = "")
-    public ResponseEntity<Map<String ,String>> add(@RequestBody JSONObject jsonObject) {
+    public ResponseEntity<Map<String ,String>> add(@RequestBody JSONObject jsonObject, @SessionAttribute Employee loginEmployee) {
+        Map<String, String> responseMap = new HashMap<>();
         if(!jsonDataCheck(jsonObject)) {
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "data type error");
-            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+            responseMap.put("message", "数据错误");
+            return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
         }
 
         List<Product> products = new ArrayList<>();
@@ -122,32 +134,35 @@ public class SaleOpportunityController {
         for (Integer id : productIds){
             Optional<Product> optionalProduct = productRepository.findById(id);
             if(!optionalProduct.isPresent()){
-                Map<String, String> map = new HashMap<>();
-                map.put("message", "product id=" + id + " do not exist");
-                return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+                responseMap.put("message", "产品id=" + id + " 不存在");
+                return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
             }
             products.add(optionalProduct.get());
         }
         if(optionalCustomer.isPresent() && optionalFindEmployee.isPresent()){
             Customer customer = optionalCustomer.get();
+
+            if(!loginEmployee.getCustomers().contains(customer)){
+                responseMap.put("message", "没有权限");
+                return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+            }
+
             Employee findEmployee = optionalFindEmployee.get();
             saleOpportunityRepository.save(new SaleOpportunity(false, null, findEmployee, products, customer));
 
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "success");
-            return new ResponseEntity<>(map, HttpStatus.OK);
+            responseMap.put("message", "添加成功");
+            return new ResponseEntity<>(responseMap, HttpStatus.OK);
         }
-        Map<String, String> map = new HashMap<>();
-        map.put("message",  "customer or employee do not exist");
-        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        responseMap.put("message",  "客户或员工不存在");
+        return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(path = "update")
-    public ResponseEntity<Map<String ,String>> update(@RequestBody JSONObject jsonObject) {
+    public ResponseEntity<Map<String ,String>> update(@RequestBody JSONObject jsonObject, @SessionAttribute Employee loginEmployee) {
+        Map<String, String> responseMap = new HashMap<>();
         if(!jsonDataCheck(jsonObject)) {
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "data type error");
-            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+            responseMap.put("message", "数据错误");
+            return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
         }
 
         Optional<SaleOpportunity> optionalSaleOpportunity = saleOpportunityRepository.findById(jsonObject.getInt("id"));
@@ -163,14 +178,19 @@ public class SaleOpportunityController {
             for (Integer id : productIds){
                 Optional<Product> optionalProduct = productRepository.findById(id);
                 if(!optionalProduct.isPresent()){
-                    Map<String, String> map = new HashMap<>();
-                    map.put("message", "product id=" + id + " do not exist");
-                    return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+                    responseMap.put("message", "产品 id=" + id + " 不存在");
+                    return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
                 }
                 products.add(optionalProduct.get());
             }
             if (optionalCustomer.isPresent() && optionalFindEmployee.isPresent()) {
                 Customer customer = optionalCustomer.get();
+
+                if(!loginEmployee.getCustomers().contains(customer)){
+                    responseMap.put("message", "没有权限");
+                    return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+                }
+
                 Employee findEmployee = optionalFindEmployee.get();
                 saleOpportunity.setCustomer(customer);
                 saleOpportunity.setEmployee(null);
@@ -179,42 +199,45 @@ public class SaleOpportunityController {
                 saleOpportunity.setFindEmployee(findEmployee);
                 saleOpportunityRepository.save(saleOpportunity);
 
-                Map<String, String> map = new HashMap<>();
-                map.put("message", "success");
-                return new ResponseEntity<>(map, HttpStatus.OK);
+                responseMap.put("message", "修改成功");
+                return new ResponseEntity<>(responseMap, HttpStatus.OK);
             }
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "customer or employee do not exist");
-            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+            responseMap.put("message", "客户或员工不存在");
+            return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
         }
-        Map<String, String> map = new HashMap<>();
-        map.put("message", "saleOpportunity did not exist");
-        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        responseMap.put("message", "销售机会不存在");
+        return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(path = "delete")
-    public ResponseEntity<Map<String, String>> delete(@RequestBody JSONObject jsonObject) {
+    public ResponseEntity<Map<String, String>> delete(@RequestBody JSONObject jsonObject,
+                                                      @SessionAttribute Employee loginEmployee) {
+        Map<String, String> responseMap = new HashMap<>();
         try{
             jsonObject.getInt("id");
         }
         catch (JSONException e){
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "data type error");
-            return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+            responseMap.put("message", "数据错误");
+            return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
         }
 
         Optional<SaleOpportunity> optionalSaleOpportunity = saleOpportunityRepository.findById(jsonObject.getInt("id"));
         if(optionalSaleOpportunity.isPresent()){
-            saleOpportunityRepository.delete(optionalSaleOpportunity.get());
+            SaleOpportunity saleOpportunity = optionalSaleOpportunity.get();
 
-            Map<String, String> map = new HashMap<>();
-            map.put("message", "success");
-            return new ResponseEntity<>(map, HttpStatus.OK);
+            if(!loginEmployee.getCustomers().contains(saleOpportunity.getCustomer())){
+                responseMap.put("message", "没有权限");
+                return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+            }
+
+            saleOpportunityRepository.delete(saleOpportunity);
+
+            responseMap.put("message", "删除成功");
+            return new ResponseEntity<>(responseMap, HttpStatus.OK);
         }
 
-        Map<String, String> map = new HashMap<>();
-        map.put("message", "saleOpportunity did not exist");
-        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+        responseMap.put("message", "销售机会不存在");
+        return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
     }
 
     private boolean jsonDataCheck(JSONObject jsonObject){

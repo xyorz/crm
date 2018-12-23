@@ -4,6 +4,10 @@ package com.example.crm.entity;
 import org.springframework.stereotype.Controller;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -20,6 +24,20 @@ public class Employee {
 
     @Column(nullable = false)
     private String tel;
+
+//    @ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
+//    @JoinTable(joinColumns = {@JoinColumn(name = "employee_id")},
+//            inverseJoinColumns = {@JoinColumn(name = "customer_id")})
+//    private List<Customer> customers = new ArrayList<>();
+
+    @JoinTable(joinColumns={@JoinColumn(name="employee_id", referencedColumnName="id")},
+            inverseJoinColumns={@JoinColumn(name="customer_id", referencedColumnName="id")})
+    @ManyToMany(fetch=FetchType.EAGER)
+    private Set<Customer> customers = new HashSet<>();
+
+//    @ManyToMany
+//    @JoinColumn(name = "manage_customer_id")
+//    private List<Customer> customers;
 
     @Column(nullable = false)
     private String password;
@@ -68,6 +86,14 @@ public class Employee {
 
     public void setSex(Boolean sex) {
         this.sex = sex;
+    }
+
+    public Set<Customer> getCustomers() {
+        return customers;
+    }
+
+    public void setCustomers(Set<Customer> customers) {
+        this.customers = customers;
     }
 
     public String getTel() {

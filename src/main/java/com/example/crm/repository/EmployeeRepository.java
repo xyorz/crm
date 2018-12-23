@@ -4,5 +4,5 @@ import com.example.crm.entity.Employee;
 import org.springframework.data.repository.CrudRepository;
 
 public interface EmployeeRepository extends CrudRepository<Employee, Integer> {
-    public Employee findByIdAndPassword(Integer id, String password);
+    Employee findByIdAndPassword(Integer id, String password);
 }

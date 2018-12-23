@@ -1,12 +1,12 @@
-function input_config_product() {
+function input_config_product(kayField, multi) {
     $("input#pro").bsSuggest({
         url: "/product/list",
         idField: "id",
-        keyField: "id",
+        keyField: kayField,
         showHeader: true,
         showBtn: true,
         autoDropup: true,
-        multiWord: true,
+        multiWord: multi,
         separator: ' ',
         hideOnSelect: true,
         getDataMethod: 'url',
@@ -22,15 +22,16 @@ function input_config_product() {
         },
         effectiveFieldsAlias: {id: "产品编号", variety: "产品种类", price: "产品价格"}
     }).on('onSetSelectValue', function (e, selectedData, selectedRawData) {
-        $(this).val($(this).val() + " ");
+        if(multi)
+            $(this).val($(this).val() + " ");
     })
 }
 
-function input_config_customer() {
+function input_config_customer(kayField) {
     $("input#cus").bsSuggest({
         url: "/customer/list",
         idField: "id",
-        keyField: "name",
+        keyField: kayField,
         showHeader: true,
         showBtn: true,
         autoDropup: true,
@@ -58,11 +59,11 @@ function input_config_customer() {
     })
 }
 
-function input_config_employee() {
+function input_config_employee(kayField) {
     $("input#emp").bsSuggest({
         url: "/employee/list",
         idField: "id",
-        keyField: "name",
+        keyField: kayField,
         showHeader: true,
         showBtn: true,
         autoDropup: true,

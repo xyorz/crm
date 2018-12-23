@@ -30,7 +30,7 @@
                 <ul class="page-breadcrumb">
                     <li>
                         <i class="fa fa-home"></i>
-                        <a href="index.html">首页</a>
+                        <a href="index.html" th:href="@{/}">首页</a>
                         <i class="fa fa-angle-right"></i>
                     </li>
                     <li>
@@ -77,18 +77,18 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr class="odd gradeX">
-                                    <td>
-                                        shuxer
+                                <tr class="odd gradeX" th:each="customer: ${manageCustomers}">
+                                    <td th:text="${customer.getId()}">
+                                    </td>
+                                    <td th:text="${customer.getName()}">
                                     </td>
                                     <td>
-                                        shuxer@gmail.com
-                                    </td>
-                                    <td>
-                                        <select class="form-control input-small select2me" data-placeholder="选择员工">
-                                            <option value=""></option>
-                                            <option value="AL">Alabama</option>
-                                            <option value="WY">Wyoming</option>
+                                        <select class="form-control input-small select2me" data-placeholder="选择员工" th:with="first=${true}">
+                                            <option value="" th:with="first = ${false}" th:if="${first}==true"></option>
+                                            <div th:each="employee: ${employees}" th:remove="tag">
+                                                <option value="AL" th:if="${employee.getId()}!=${session.employeenum}" th:text="${employee.getId()}">1</option>
+                                            </div>
+                                            <!--<option value="WY">2</option>-->
                                         </select>
                                     </td>
                                     <td>
