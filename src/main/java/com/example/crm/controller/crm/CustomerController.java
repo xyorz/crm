@@ -2,7 +2,10 @@ package com.example.crm.controller.crm;
 
 import com.example.crm.entity.Customer;
 import com.example.crm.entity.Employee;
+<<<<<<< HEAD
 import com.example.crm.entity.SaleOpportunity;
+=======
+>>>>>>> 9fc40899b01d3a8a60fd244c5d2691420de05bd5
 import com.example.crm.repository.CustomerRepository;
 import com.example.crm.repository.EmployeeRepository;
 import net.sf.json.JSONException;
@@ -14,8 +17,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+<<<<<<< HEAD
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.ServletOutputStream;
+=======
+>>>>>>> 9fc40899b01d3a8a60fd244c5d2691420de05bd5
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
@@ -28,13 +34,25 @@ public class CustomerController {
     private CustomerRepository customerRepository;
     @Autowired
     private EmployeeRepository employeeRepository;
+<<<<<<< HEAD
+=======
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+>>>>>>> 9fc40899b01d3a8a60fd244c5d2691420de05bd5
 
     @GetMapping("")
     public ModelAndView customers(@SessionAttribute Employee loginEmployee){
 
         ModelAndView mav = new ModelAndView("customer");
+<<<<<<< HEAD
         Iterable<Customer> iterable = loginEmployee.getCustomers();
         mav.addObject("customers", iterable);
+=======
+        //通过session来获取员工ID
+        HttpSession httpSession = httpServletRequest.getSession();
+        Integer employeeid =(Integer) httpSession.getAttribute("id");
+        mav.addObject("customers",employeeRepository.queryById(employeeid));
+>>>>>>> 9fc40899b01d3a8a60fd244c5d2691420de05bd5
         return mav;
 //        return new ModelAndView("index");
     }
@@ -91,8 +109,15 @@ public class CustomerController {
     }
 
     @GetMapping("list")
+<<<<<<< HEAD
     public ResponseEntity<Map<String, Object>> list(@SessionAttribute Employee loginEmployee){
         Iterable<Customer> iterable = loginEmployee.getCustomers();
+=======
+    public ResponseEntity<Map<String, Object>> list(){
+        HttpSession httpSession = httpServletRequest.getSession();
+        Integer employeeid =(Integer) httpSession.getAttribute("id");
+        Iterable<Customer> iterable = employeeRepository.queryById(employeeid);
+>>>>>>> 9fc40899b01d3a8a60fd244c5d2691420de05bd5
         List<Map<String, String>> cusInfoList = new ArrayList<>();
         for(Customer cus : iterable){
             Map<String, String> cusMap = new HashMap<>();
@@ -131,6 +156,7 @@ public class CustomerController {
         responseMap.put("message", "添加成功");
         return new ResponseEntity<>(responseMap, HttpStatus.OK);
 
+<<<<<<< HEAD
     }
 
     @PostMapping(path = "update")
@@ -141,6 +167,24 @@ public class CustomerController {
             responseMap.put("message", "数据错误");
             return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
         }
+=======
+        HttpSession httpSession = httpServletRequest.getSession();
+        Integer employeeid =(Integer) httpSession.getAttribute("id");
+        Optional<Employee>  employeeOptional = employeeRepository.findById(employeeid);
+        Employee employee = employeeOptional.get();
+        List<Customer> customerList = employee.getCustomers();
+        customerList.add(customer);
+        employee.setCustomers(customerList);
+        employeeRepository.save(employee);
+
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "success");
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "update")
+    public ResponseEntity<Map<String, String>> update(@RequestBody Customer customer) {
+>>>>>>> 9fc40899b01d3a8a60fd244c5d2691420de05bd5
 
         Optional<Customer> optionalCustomer = customerRepository.findById(customer.getId());
         if(optionalCustomer.isPresent()){
@@ -189,6 +233,7 @@ public class CustomerController {
         Optional<Customer> optionalCustomer = customerRepository.findById(jsonObject.getInt("id"));
         if(optionalCustomer.isPresent()){
 
+<<<<<<< HEAD
             Customer customer = optionalCustomer.get();
 
             if(!loginEmployee.getCustomers().contains(customer)){
@@ -200,6 +245,20 @@ public class CustomerController {
 
             responseMap.put("message", "删除成功");
             return new ResponseEntity<>(responseMap, HttpStatus.OK);
+=======
+            HttpSession httpSession = httpServletRequest.getSession();
+            Integer employeeid =(Integer) httpSession.getAttribute("id");
+            Optional<Employee>  employeeOptional = employeeRepository.findById(employeeid);
+            Employee employee = employeeOptional.get();
+            List<Customer> customerList = employee.getCustomers();
+            customerList.remove(optionalCustomer.get());
+            employee.setCustomers(customerList);
+            employeeRepository.save(employee);
+
+            Map<String, String> map = new HashMap<>();
+            map.put("message", "success");
+            return new ResponseEntity<>(map, HttpStatus.OK);
+>>>>>>> 9fc40899b01d3a8a60fd244c5d2691420de05bd5
         }
 
         responseMap.put("message", "客户不存在");
