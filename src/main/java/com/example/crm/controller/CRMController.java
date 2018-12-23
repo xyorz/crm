@@ -49,7 +49,7 @@ public class CRMController {
             }
             else {
                 mav.setViewName("login");
-                mav.addObject("errorInfo", "用户名或密码错误");
+                mav.addObject("errorInfo", 0);
             }
         }
         catch (NumberFormatException nfe){
