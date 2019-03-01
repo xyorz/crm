@@ -45,7 +45,7 @@
         <!-- BEGIN LOGO -->
         <div class="page-logo">
             <a href="index.html" th:href="@{/}">
-                <img src="" alt="logo"/>
+                <!--<img src="" alt="logo"/>-->
             </a>
         </div>
         <form class="search-form search-form-header" role="form" action="index.html">
@@ -56,9 +56,9 @@
         </form>
         <!-- END LOGO -->
         <!-- BEGIN RESPONSIVE MENU TOGGLER -->
-        <a href="javascript:;" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <img src="assets/img/menu-toggler.png" alt=""/>
-        </a>
+        <!--<a href="javascript:;" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">-->
+            <!--<img src="assets/img/menu-toggler.png" alt=""/>-->
+        <!--</a>-->
         <!-- END RESPONSIVE MENU TOGGLER -->
         <!-- BEGIN TOP NAVIGATION MENU -->
         <ul class="nav navbar-nav pull-right">
@@ -110,7 +110,7 @@
             <li class="dropdown user">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
                     <img alt="" src=""/>
-                    <span class="username username-hide-on-mobile" th:text="${session.employeenum}">Nick </span>
+                    <span class="username username-hide-on-mobile" th:text="${session.loginEmployee.getName()}">Nick </span>
                     <i class="fa fa-angle-down"></i>
                 </a>
                 <ul class="dropdown-menu">
@@ -177,6 +177,10 @@
                         <a href="customer_share.html" th:href="@{/customer/share}">
                             客户共享</a>
                     </li>
+                    <li>
+                        <a href="customer_share.html" th:href="@{/customer/shareManage}">
+                            共享管理</a>
+                    </li>
                 </ul>
             </li>
             <li th:class="${active=='product'} ? 'active' : ''">
@@ -219,6 +223,8 @@
                     <li>
                         <a href="order.html" th:href="@{/order}">
                             订单信息</a>
+                        <!--<a href="order.html" th:href="@{/order/record}">-->
+                            <!--订单记录</a>-->
                     </li>
                 </ul>
             </li>

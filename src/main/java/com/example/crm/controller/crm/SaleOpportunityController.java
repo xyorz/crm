@@ -69,6 +69,11 @@ public class SaleOpportunityController {
                 return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
             }
 
+            if(saleOpportunityRepository.findAllByEmployeeAndIsDeclareFalse(loginEmployee).size()>=3){
+                responseMap.put("message", "同时获取的销售机会最多为3个");
+                return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+            }
+
             saleOpportunity.setEmployee(loginEmployee);
             saleOpportunity.setFindEmployee(null);
             saleOpportunityRepository.save(saleOpportunity);
@@ -128,13 +133,13 @@ public class SaleOpportunityController {
         Optional<Customer> optionalCustomer = customerRepository.findByName(jsonObject.getString("customerName"));
         Optional<Employee> optionalFindEmployee = employeeRepository.findById(jsonObject.getInt("findEmployeeId"));
         List<Object> productIdObj = Arrays.asList(jsonObject.getJSONArray("productIds").toArray());
-        List<Integer> productIds = new ArrayList<>();
+        List<String> productNames = new ArrayList<>();
         for(Object obj : productIdObj)
-            productIds.add(Integer.parseInt((String) obj));
-        for (Integer id : productIds){
-            Optional<Product> optionalProduct = productRepository.findById(id);
+            productNames.add((String) obj);
+        for (String pruductName : productNames){
+            Optional<Product> optionalProduct = productRepository.findByVariety(pruductName);
             if(!optionalProduct.isPresent()){
-                responseMap.put("message", "产品id=" + id + " 不存在");
+                responseMap.put("message", "产品 " + pruductName + " 不存在");
                 return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
             }
             products.add(optionalProduct.get());
@@ -172,13 +177,13 @@ public class SaleOpportunityController {
             List<Product> products = new ArrayList<>();
             Optional<Customer> optionalCustomer = customerRepository.findByName(jsonObject.getString("customerName"));
             List<Object> productIdObj = Arrays.asList(jsonObject.getJSONArray("productIds").toArray());
-            List<Integer> productIds = new ArrayList<>();
+            List<String> productNames = new ArrayList<>();
             for(Object obj : productIdObj)
-                productIds.add(Integer.parseInt((String) obj));
-            for (Integer id : productIds){
-                Optional<Product> optionalProduct = productRepository.findById(id);
+                productNames.add((String) obj);
+            for (String productName : productNames){
+                Optional<Product> optionalProduct = productRepository.findByVariety(productName);
                 if(!optionalProduct.isPresent()){
-                    responseMap.put("message", "产品 id=" + id + " 不存在");
+                    responseMap.put("message", "产品 " + productNames + " 不存在");
                     return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
                 }
                 products.add(optionalProduct.get());
@@ -246,9 +251,7 @@ public class SaleOpportunityController {
                 jsonObject.getInt("id");
             jsonObject.getString("customerName");
             jsonObject.getInt("findEmployeeId");
-            List<Object> productIdObj = Arrays.asList(jsonObject.getJSONArray("productIds").toArray());
-            for(Object obj : productIdObj)
-                Integer.parseInt((String) obj);
+            Arrays.asList(jsonObject.getJSONArray("productIds").toArray());
         }catch (Exception e){
             return false;
         }

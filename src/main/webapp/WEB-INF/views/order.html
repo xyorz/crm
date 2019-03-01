@@ -20,6 +20,20 @@ Version: 2.0
 <!-- END HEADER -->
 <div class="clearfix">
 </div>
+<script>
+    var price_list = [];
+    window.onload = function (ev) {
+        $.ajax({
+            type: 'GET',
+            url: '/product/price_list',
+            async: false,
+            contentType:"application/json",
+            success: function(result){
+                price_list = result.value;
+            }
+        })
+    }
+</script>
 <!-- BEGIN CONTAINER -->
 <div class="page-container">
     <div th:replace="base :: commonSideBar(order)">
@@ -78,7 +92,7 @@ Version: 2.0
                                         订单编号
                                     </th>
                                     <th>
-                                        客户编号
+                                        客户姓名
                                     </th>
                                     <th>
                                         订单日期
@@ -87,10 +101,13 @@ Version: 2.0
                                         订单产品
                                     </th>
                                     <th>
-                                        订单总金额
+                                        产品数量
                                     </th>
                                     <th>
-                                        订单已支付金额
+                                        订单总金额(￥)
+                                    </th>
+                                    <th>
+                                        订单已支付金额(￥)
                                     </th>
                                     <th>
                                         订单状态
@@ -115,14 +132,17 @@ Version: 2.0
                                     <td th:text="${order.getId()}">
                                        alex
                                     </td>
-                                    <td th:text="${order.getCustomer().getId()}">
+                                    <td th:text="${order.getCustomer().getName()}">
                                         Alex Nilson
                                     </td>
                                     <td th:text="${order.getDate().toString().split(' ')[0]}">
                                         1234
                                     </td>
-                                    <td class="center" th:text="${order.getProduct().getId()}">
+                                    <td class="center" th:text="${order.getProduct().getVariety()}">
                                         power user
+                                    </td>
+                                    <td th:text="${order.getAmount()}">
+
                                     </td>
                                     <td th:text="${order.getValue()}">
                                         power user

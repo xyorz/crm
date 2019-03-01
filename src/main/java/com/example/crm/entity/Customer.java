@@ -49,24 +49,28 @@ public class Customer {
     @Column(nullable = false)
     private Integer credit;
 
+    private Integer ownEmployeeId;
+
     public Customer() {
     }
 
-    public Customer(String name, String tel, String address, String text, Integer credit) {
+    public Customer(String name, String tel, String address, String text, Integer credit, Integer ownEmployeeId) {
         this.name = name;
         this.tel = tel;
         this.address = address;
         this.text = text;
         this.credit = credit;
+        this.ownEmployeeId = ownEmployeeId;
     }
 
-    public Customer(String name, List<LinkMan> linkMen, String tel, String address, String text, Integer credit) {
+    public Customer(String name, List<LinkMan> linkMen, String tel, String address, String text, Integer credit, Integer ownEmployeeId) {
         this.name = name;
         this.linkMen = linkMen;
         this.tel = tel;
         this.address = address;
         this.text = text;
         this.credit = credit;
+        this.ownEmployeeId = ownEmployeeId;
     }
 
     public Integer getId() {
@@ -123,5 +127,13 @@ public class Customer {
 
     public void setCredit(Integer credit) {
         this.credit = credit;
+    }
+
+    public Integer getOwnEmployeeId() {
+        return ownEmployeeId;
+    }
+
+    public void setOwnEmployeeId(Integer ownEmployeeId) {
+        this.ownEmployeeId = ownEmployeeId;
     }
 }

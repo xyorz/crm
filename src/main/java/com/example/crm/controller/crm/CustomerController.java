@@ -5,6 +5,7 @@ import com.example.crm.entity.Employee;
 import com.example.crm.entity.SaleOpportunity;
 import com.example.crm.repository.CustomerRepository;
 import com.example.crm.repository.EmployeeRepository;
+import com.example.crm.repository.SaleOpportunityRepository;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @Controller
@@ -28,6 +25,8 @@ public class CustomerController {
     private CustomerRepository customerRepository;
     @Autowired
     private EmployeeRepository employeeRepository;
+    @Autowired
+    private SaleOpportunityRepository saleOpportunityRepository;
 
     @GetMapping("")
     public ModelAndView customers(@SessionAttribute Employee loginEmployee){
@@ -43,9 +42,19 @@ public class CustomerController {
     public ModelAndView share(@SessionAttribute Employee loginEmployee){
         ModelAndView mav = new ModelAndView("customer_share");
         Iterable<Employee> employees = employeeRepository.findAll();
+        Iterable<Employee> resEmployees = new HashSet<>();
+        for(Employee employee : employees)
+            if(employee.getLevel()<1)
+                ((HashSet<Employee>) resEmployees).add(employee);
         Set<Customer> customerList = loginEmployee.getCustomers();
-        mav.addObject("employees", employees);
-        mav.addObject("manageCustomers", customerList);
+
+        Set<Customer> manageCusList = new HashSet<>();
+        for (Customer customer: customerList)
+            if(customer.getOwnEmployeeId().equals(loginEmployee.getId()))
+                manageCusList.add(customer);
+
+        mav.addObject("employees", resEmployees);
+        mav.addObject("manageCustomers", manageCusList);
         return mav;
     }
 
@@ -82,6 +91,56 @@ public class CustomerController {
         if(!optionalEmployee.isPresent()) message = "共享的员工不存在";
         else if(loginEmployee==null) message = "登陆信息错误";
         responseMap.put("message", message);
+        return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping(path = "shareManage")
+    public ModelAndView shareManage(@SessionAttribute Employee loginEmployee){
+        ModelAndView mav = new ModelAndView("share_manage");
+        Set<Map<String, String>> resSet = new HashSet<>();
+        Iterable<Employee> employeeList = employeeRepository.findAll();
+        for(Employee emp : employeeList){
+            for(Customer cus : emp.getCustomers())
+                if(cus.getOwnEmployeeId().equals(loginEmployee.getId()) && !emp.getId().equals(loginEmployee.getId())){
+                    Map<String, String> infoMap = new HashMap<>();
+                    infoMap.put("employeeName", emp.getName());
+                    infoMap.put("employeeId", emp.getId().toString());
+                    infoMap.put("customerName", cus.getName());
+                    resSet.add(infoMap);
+                }
+        }
+        mav.addObject("infoSet", resSet);
+        return mav;
+    }
+
+    @GetMapping(path = "cancelShare")
+    public ResponseEntity<Map<String, String>> cancelShare(@RequestParam String customerName, @RequestParam Integer employeeId) {
+        Map<String, String> responseMap = new HashMap<>();
+        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
+        Optional<Customer> optionalCustomer = customerRepository.findByName(customerName);
+        if(optionalCustomer.isPresent() && optionalEmployee.isPresent()){
+            Customer customer = optionalCustomer.get();
+            Employee employee = optionalEmployee.get();
+
+            Iterable<SaleOpportunity> saleOpportunityIterable =  saleOpportunityRepository.findAll();
+            for(SaleOpportunity saleOpportunity : saleOpportunityIterable){
+                System.out.println(employeeId);
+                if(saleOpportunity.getEmployee()!=null&&saleOpportunity.getCustomer().getId().equals(customer.getId())&&
+                        !saleOpportunity.getDeclare()&&saleOpportunity.getEmployee().getId().equals(employeeId)){
+                    responseMap.put("message", "该员工获取了销售机会且未完成，暂不能取消共享");
+                    return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+                }
+            }
+
+            Set<Customer> customerSet = employee.getCustomers();
+            customerSet.remove(customer);
+            employeeRepository.save(employee);
+
+            responseMap.put("message", "取消共享成功");
+            return new ResponseEntity<>(responseMap, HttpStatus.OK);
+        }
+
+        responseMap.put("message", "客户或员工不存在");
         return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
     }
 
@@ -122,6 +181,7 @@ public class CustomerController {
 
         // 初始积分为0
         customer.setCredit(0);
+        customer.setOwnEmployeeId(loginEmployee.getId());
         customerRepository.save(customer);
         Set<Customer> manageCustomers = loginEmployee.getCustomers();
         manageCustomers.add(customer);

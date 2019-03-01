@@ -17,8 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @Controller
@@ -44,6 +42,7 @@ public class OrdersController {
             if(manageCustomers.contains(order.getCustomer()))
                 resOrders.add(order);
         }
+        mav.addObject("products", productRepository.findAll());
         mav.addObject("orders", resOrders);
         return mav;
     }
@@ -57,8 +56,8 @@ public class OrdersController {
             return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
         }
 
-        Optional<Customer> optionalCustomer = customerRepository.findById(jsonObject.getInt("customerId"));
-        Optional<Product> optionalProduct = productRepository.findById(jsonObject.getInt("productId"));
+        Optional<Customer> optionalCustomer = customerRepository.findByName(jsonObject.getString("customerName"));
+        Optional<Product> optionalProduct = productRepository.findByVariety(jsonObject.getString("productName"));
         if(optionalCustomer.isPresent()&&optionalProduct.isPresent()){
             Customer customer = optionalCustomer.get();
 
@@ -70,13 +69,23 @@ public class OrdersController {
             Product product = optionalProduct.get();
             float value = Float.parseFloat((String) jsonObject.get("value"));
             float paidValue = Float.parseFloat((String) jsonObject.get("paidValue"));
+            Integer amount = jsonObject.getInt("amount");
             if(paidValue > value){
                 responseMap.put("message", "已付金额不能大于总金额");
                 return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
             }
+            Integer productLeftAmount = product.getAmount() - amount;
+            if(productLeftAmount < 0){
+                responseMap.put("message", "库存产品不足");
+                return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
+            }
+
+            product.setAmount(productLeftAmount);
+            productRepository.save(product);
+
             // 如果总金额 == 已付金额，订单状态改为完成
             boolean status = paidValue == value;
-            Orders order = new Orders(customer, loginEmployee, product, status,
+            Orders order = new Orders(customer, loginEmployee, product, amount, status,
                     false, new Date(),
                     value , paidValue, jsonObject.getString("record"));
             orderRepository.save(order);
@@ -99,8 +108,8 @@ public class OrdersController {
         Optional<Orders> optionalSaleOpportunity = orderRepository.findById(jsonObject.getInt("id"));
         if (optionalSaleOpportunity.isPresent()) {
             Orders order = optionalSaleOpportunity.get();
-            Optional<Customer> optionalCustomer = customerRepository.findById(jsonObject.getInt("customerId"));
-            Optional<Product> optionalProduct = productRepository.findById(jsonObject.getInt("productId"));
+            Optional<Customer> optionalCustomer = customerRepository.findByName(jsonObject.getString("customerName"));
+            Optional<Product> optionalProduct = productRepository.findByVariety(jsonObject.getString("productName"));
             if (optionalCustomer.isPresent() && optionalProduct.isPresent()) {
                 Customer customer = optionalCustomer.get();
 
@@ -113,13 +122,16 @@ public class OrdersController {
 
                 float value = Float.parseFloat((String) jsonObject.get("value"));
                 float paidValue = Float.parseFloat((String) jsonObject.get("paidValue"));
+                Integer amount = jsonObject.getInt("amount");
                 if(paidValue > value){
                     responseMap.put("message", "已付金额不能大于总金额");
                     return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
                 }
+
                 order.setCustomer(customer);
                 order.setEmployee(loginEmployee);
                 order.setProduct(product);
+                order.setAmount(amount);
 //                order.setDate(new Date());
                 order.setPaidValue(paidValue);
                 order.setValue(Float.parseFloat((String) jsonObject.get("value")));
@@ -164,7 +176,11 @@ public class OrdersController {
                 return new ResponseEntity<>(responseMap, HttpStatus.BAD_REQUEST);
             }
 
+            Product product = order.getProduct();
+            product.setAmount(product.getAmount() + order.getAmount());
+            productRepository.save(product);
             orderRepository.delete(order);
+
 
             Map<String, String> map = new HashMap<>();
             map.put("message", "删除成功");
@@ -180,11 +196,12 @@ public class OrdersController {
         try{
             if(jsonObject.get("id")!=null && jsonObject.get("id")!="")
                 jsonObject.getInt("id");
-            jsonObject.getInt("customerId");
+            jsonObject.getString("customerName");
 //            jsonObject.getInt("employeeId");
-            jsonObject.getInt("productId");
+            jsonObject.getString("productName");
             Float.parseFloat((String) jsonObject.get("paidValue"));
             Float.parseFloat((String) jsonObject.get("value"));
+            jsonObject.getInt("amount");
 //            jsonObject.getBoolean("status");
             jsonObject.getBoolean("receiptStatus");
             jsonObject.getString("record");

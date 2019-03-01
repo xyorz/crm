@@ -50,6 +50,18 @@ public class ProductController {
         return new ResponseEntity<>(responseMap, HttpStatus.OK);
     }
 
+    @GetMapping("price_list")
+    public ResponseEntity<Map<String, Object>> priceList(){
+        Iterable<Product> iterable = productRepository.findAll();
+        Map<String, String> proMap = new HashMap<>();
+        for(Product pro : iterable)
+            proMap.put(pro.getVariety(), Float.toString(pro.getPrice()));
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("value", proMap);
+//        System.out.println(proMap);
+        return new ResponseEntity<>(responseMap, HttpStatus.OK);
+    }
+
 
     @GetMapping("manage")
     public ModelAndView productManage(@RequestParam Integer id, @SessionAttribute Integer level){
@@ -92,7 +104,7 @@ public class ProductController {
         Optional<Product> optionalProduct = productRepository.findById(product.getId());
         if(optionalProduct.isPresent()){
             Product prod = optionalProduct.get();
-            prod.setName(product.getName());
+            prod.setVariety(product.getVariety());
             prod.setAmount(product.getAmount());
             prod.setPrice(product.getPrice());
             prod.setCost(product.getCost());

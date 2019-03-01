@@ -20,7 +20,7 @@ var TableEditable = function () {
             jqTds[2].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[2] + '">';
             jqTds[3].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[3] + '">';
             jqTds[4].innerHTML = '0';
-            jqTds[5].innerHTML = '<a class="edit" href="">保存</a><br><a class="cancel" href="">放弃</a>';
+            jqTds[4].innerHTML = '<a class="edit" href="">保存</a><br><a class="cancel" href="">放弃</a>';
         }
         function editRow(oTable, nRow) {
             var aData = oTable.fnGetData(nRow);
@@ -28,7 +28,7 @@ var TableEditable = function () {
             jqTds[1].innerHTML = '<input type="text" class="form-control input-small" value="' + nRow.cells[1].innerText + '">';
             jqTds[2].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[2] + '">';
             jqTds[3].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[3] + '">';
-            jqTds[5].innerHTML = '<a class="edit" href="">保存</a><br><a class="cancel" href="">放弃</a>';
+            jqTds[4].innerHTML = '<a class="edit" href="">保存</a><br><a class="cancel" href="">放弃</a>';
         }
         function saveRow(oTable, nRow) {
             var jqInputs = $('input', nRow);
@@ -46,7 +46,7 @@ var TableEditable = function () {
                 oTable.fnUpdate(jqInputs[1].value, nRow, 2, false);
                 oTable.fnUpdate(jqInputs[2].value, nRow, 3, false);
             }
-            oTable.fnUpdate('<a class="edit" href="">编辑</a>', nRow, 5, false);
+            oTable.fnUpdate('<a class="edit" href="">编辑</a>', nRow, 4, false);
             oTable.fnDraw();
         }
 
@@ -130,7 +130,7 @@ var TableEditable = function () {
             e.preventDefault();
             if(nNew==false && nEditing==null)
             {
-                var aiNew = oTable.fnAddData(['', '', '', '', '', '']);
+                var aiNew = oTable.fnAddData(['', '', '', '', '']);
                 var nRow = oTable.fnGetNodes(aiNew[0]);
                 editRow1(oTable, nRow);
                 nEditing = nRow;

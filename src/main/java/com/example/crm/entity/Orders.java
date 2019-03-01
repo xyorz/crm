@@ -22,6 +22,9 @@ public class Orders {
     private Product product;
 
     @Column(nullable = false)
+    private Integer amount;
+
+    @Column(nullable = false)
     private boolean status;
 
     @Column(nullable = false)
@@ -42,10 +45,11 @@ public class Orders {
     public Orders() {
     }
 
-    public Orders(Customer customer, Employee employee, Product product, boolean status, boolean receiptStatus, Date date, float value, float paidValue, String record) {
+    public Orders(Customer customer, Employee employee, Product product, Integer amount, boolean status, boolean receiptStatus, Date date, float value, float paidValue, String record) {
         this.customer = customer;
         this.employee = employee;
         this.product = product;
+        this.amount = amount;
         this.status = status;
         this.receiptStatus = receiptStatus;
         this.date = date;
@@ -60,6 +64,14 @@ public class Orders {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Integer amount) {
+        this.amount = amount;
     }
 
     public Customer getCustomer() {

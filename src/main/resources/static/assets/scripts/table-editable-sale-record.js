@@ -17,9 +17,10 @@ var TableEditable = function () {
             var aData = oTable.fnGetData(nRow);
             var jqTds = $('>td', nRow);
             jqTds[0].innerHTML = '<input type="date" class="form-control" value="'+aData[0]+'">';
-            jqTds[1].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[1] + '">';
-            jqTds[3].innerHTML = '<a class="edit" href="">保存</a>';
-            jqTds[4].innerHTML = '<a class="cancel" href="">放弃</a>';
+            jqTds[1].innerHTML = '<input type="text" class="form-control" value="' + aData[1] + '">';
+            jqTds[2].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[2] + '">';
+            jqTds[4].innerHTML = '<a class="edit" href="">保存</a>';
+            jqTds[5].innerHTML = '<a class="cancel" href="">放弃</a>';
         }
 
         function saveRow(oTable, nRow) {
@@ -44,6 +45,7 @@ var TableEditable = function () {
             var b=a+'-';
             var c0V = b.substring(0,10);
             var c1V = jqInputs[1].value;
+            var c2V = jqInputs[2].value;
             var id_elem = $("#followup_id");
             var id = "";
             if(id_elem !== undefined) id = id_elem.attr("value");
@@ -53,7 +55,7 @@ var TableEditable = function () {
                 return null;
             }
 
-            return {"date": c0V, "record": c1V, "id": id, "saleOpportunityId": $("#sale_opportunity_id").attr("value")};
+            return {"date": c0V, "record": c1V, "id": id, "cost": c2V,"saleOpportunityId": $("#sale_opportunity_id").attr("value")};
         }
 
         function ajaxUpload(url, method, data) {
@@ -116,6 +118,7 @@ var TableEditable = function () {
 
         $('#sample_editable_1_new').click(function (e) {
             e.preventDefault();
+
             if(nNew==false && nEditing==null)
             {
                 var aiNew = oTable.fnAddData(['', '', '', '', '', '']);
@@ -133,15 +136,21 @@ var TableEditable = function () {
         table.on('click', '.delete', function (e) {
             e.preventDefault();
 
+            var text = $(this).parent().parent().children("#declare").text();
+            if(text === "已申报"){
+                alert("不能重复申报");
+                return;
+            }
+
             if (confirm("是否确认申报？") == false) {
                 return;
             }
 
             var nRow = $(this).parents('tr')[0];
-
             var delId = 0;
             try{
-                delId = $("#followup_id").attr("value");
+                delId = $(this).parent().parent().children("#followup_id").attr("value");
+                // delId = $("#followup_id").attr("value");
             }catch (e) {
                 delId = 0;
             }
@@ -171,6 +180,14 @@ var TableEditable = function () {
 
             if (nEditing !== null && nEditing != nRow) {
                 /* Currently editing - but not this row - restore the old before continuing to edit mode */
+                var text = $(this).parent().parent().children("#declare").text();
+                if(text === "已申报"){
+                    alert("已申报，无法编辑");
+                    return;
+                }
+                if (text === "已申报"){
+                    alert("")
+                }
                 restoreRow(oTable, nEditing);
                 editRow(oTable, nRow);
                 nEditing = nRow;
@@ -189,6 +206,11 @@ var TableEditable = function () {
                 nEditing = null;
             } else {
                 /* No edit in progress - let's start one */
+                var text = $(this).parent().parent().children("#declare").text();
+                if(text === "已申报"){
+                    alert("已申报，无法编辑");
+                    return;
+                }
                 editRow(oTable, nRow);
                 nEditing = nRow;
             }

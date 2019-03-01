@@ -22,9 +22,13 @@ public class FollowUpRecord {
     @Column(nullable = false)
     private Boolean isDeclare;
 
+    @Column
+    private float cost;
+
     public FollowUpRecord(){}
 
-    public FollowUpRecord(SaleOpportunity saleOpportunity, String record, Date date, Boolean isDeclare) {
+    public FollowUpRecord(SaleOpportunity saleOpportunity, float cost,String record, Date date, Boolean isDeclare) {
+        this.cost = cost;
         this.saleOpportunity = saleOpportunity;
         this.record = record;
         this.date = date;
@@ -45,6 +49,14 @@ public class FollowUpRecord {
 
     public void setRecord(String record) {
         this.record = record;
+    }
+
+    public float getCost() {
+        return cost;
+    }
+
+    public void setCost(float cost) {
+        this.cost = cost;
     }
 
     public Date getDate() {

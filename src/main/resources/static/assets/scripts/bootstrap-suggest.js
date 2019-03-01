@@ -1009,6 +1009,7 @@
         }
     };
 
+    // 把暴露接口的工作放到了jquery上，只是定义了一个新的jquery的方法
     $.fn[BSSUGGEST] = function(options) {
         // 方法判断
         if (typeof options === 'string' && methods[options]) {

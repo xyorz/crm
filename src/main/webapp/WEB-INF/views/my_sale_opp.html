@@ -20,6 +20,20 @@ Version: 2.0
 <!-- END HEADER -->
 <div class="clearfix">
 </div>
+<script>
+    var price_list = [];
+    window.onload = function (ev) {
+        $.ajax({
+            type: 'GET',
+            url: '/product/price_list',
+            async: false,
+            contentType:"application/json",
+            success: function(result){
+                price_list = result.value;
+            }
+        })
+    }
+</script>
 <!-- BEGIN CONTAINER -->
 <div class="page-container">
     <!-- BEGIN SIDEBAR -->
@@ -70,7 +84,7 @@ Version: 2.0
                                         机会编号
                                     </th>
                                     <th>
-                                        产品编号
+                                        产品
                                     </th>
                                     <th>
                                         客户名称
@@ -87,8 +101,8 @@ Version: 2.0
                                     <td>
                                         <a href="javascript:;" class="sonpage" th:text="${manageSaleOpportunitiy.getId()}">123456</a>
                                     </td>
-                                    <td>
-                                        <span th:each="product : ${manageSaleOpportunitiy.getProducts()}" th:remove="tag"><span th:text="${product.getId()}+' '" th:remove="tag"></span></span>
+                                    <td class="p_name">
+                                        <span th:each="product : ${manageSaleOpportunitiy.getProducts()}" th:remove="tag"><span th:text="${product.getVariety()}+' '" th:remove="tag"></span></span>
                                     </td>
                                     <td class="center" th:text="${manageSaleOpportunitiy.getCustomer().getName()}">
                                         power user
@@ -137,7 +151,7 @@ Version: 2.0
                                         机会编号
                                     </th>
                                     <th>
-                                        产品编号
+                                        产品
                                     </th>
                                     <th>
                                         客户名称
@@ -156,8 +170,8 @@ Version: 2.0
                                     <td th:text="${findSaleOpportunity.getId()}">
                                         alex
                                     </td>
-                                    <td>
-                                        <span th:each="product : ${findSaleOpportunity.getProducts()}" th:remove="tag"><span th:text="${product.getId()}+' '" th:remove="tag"></span></span>
+                                    <td class="p_name">
+                                        <span th:each="product : ${findSaleOpportunity.getProducts()}" th:remove="tag"><span th:text="${product.getVariety()}+' '" th:remove="tag"></span></span>
                                     </td>
                                     <td class="center" th:text="${findSaleOpportunity.getCustomer().getName()}">
                                         power user

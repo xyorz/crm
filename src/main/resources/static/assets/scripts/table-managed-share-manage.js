@@ -1,32 +1,45 @@
-var TableEditable = function () {
+var TableManaged = function () {
 
-    var handleTable = function () {
-        var table = $('#sample_editable_1');
+    var initTable1 = function () {
 
-        var oTable = table.dataTable({
+        var table = $('#sample_1');
+
+        // begin first table
+        table.dataTable({
+            "columns": [ {
+                "orderable": true
+            }, {
+                "orderable": false
+            }, {
+                "orderable": true
+            }],
             "lengthMenu": [
                 [5, 15, 20, -1],
                 [5, 15, 20, "All"] // change per page values here
             ],
             // set the initial value
-            "pageLength": 10,
-
+            "pageLength": 5,
+            "pagingType": "bootstrap_full_number",
             "language": {
-                "lengthMenu": " _MENU_ 行"
+                "lengthMenu": "  _MENU_ 行",
+                "paginate": {
+                    "previous":"Prev",
+                    "next": "Next",
+                    "last": "Last",
+                    "first": "First"
+                }
             },
-            "columnDefs": [{ // set default column settings
-                'orderable': true,
+            "columnDefs": [{  // set default column settings
+                'orderable': false,
                 'targets': [0]
             }, {
-                "searchable": true,
+                "searchable": false,
                 "targets": [0]
             }],
             "order": [
                 [0, "asc"]
             ] // set first column as a default sort by asc
         });
-
-        var tableWrapper = $("#sample_editable_1_wrapper");
 
         function ajaxUpload(url, method, data) {
             $.ajax({
@@ -37,6 +50,7 @@ var TableEditable = function () {
                 contentType:"application/json",
                 success: function(result){
                     alert(result.message);
+
                     window.location.href = "/sale_opportunity/my_opp?employeeId=" + $("#employee_id").attr("value");
                 },
                 error: function (result) {
@@ -51,21 +65,26 @@ var TableEditable = function () {
             })
         }
 
-        tableWrapper.find(".dataTables_length select").select2({
-            showSearchInput: false //hide search box with special css class
-        }); // initialize select2 dropdown
-        table.on('click', '.getopp', function (e) {
-            var id = $(this).parent().siblings().eq(0).text();
-            var employeeId = $("#employee_id").attr("value");
-            ajaxUpload("/sale_opportunity/gain", "GET", {"id": id, "employeeId": employeeId});
+        table.on('click','.cancel_share', function () {
+            var nRow = $(this).parents('tr')[0];
+            if(!confirm("是否确认取消？")){
+                return false;
+            }
+            var url = "/customer/cancelShare";
+            ajaxUpload(url, "GET", {"customerName": nRow.cells[0].innerText, "employeeId": $(nRow.cells[2]).children("input").attr("value")});
+            window.location.reload();
         });
-    }
 
+    };
     return {
 
         //main function to initiate the module
         init: function () {
-            handleTable();
+            if (!jQuery().dataTable) {
+                return;
+            }
+
+            initTable1();
         }
 
     };

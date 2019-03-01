@@ -18,7 +18,9 @@ function input_config_product(kayField, multi) {
             'text-align': 'center',
             'cursor': 'default',
             'z-index': ' 9999',
-            'overflow': 'visible'
+            'overflow': 'visible',
+            'max-width': '800px',
+            'width': '230px'
         },
         effectiveFieldsAlias: {id: "产品编号", variety: "产品种类", price: "产品价格"}
     }).on('onSetSelectValue', function (e, selectedData, selectedRawData) {
@@ -90,3 +92,30 @@ function input_config_employee(kayField) {
         // $(this).val($(this).val()+",");
     })
 }
+
+
+function listen_input_change(product_elem, amount_elem, price_elem, price_list) {
+    $(product_elem).on('onSetSelectValue', function (e, selectedData, selectedRawData) {
+        if(price_list.hasOwnProperty($(product_elem).val())){
+            if(isNumber($(amount_elem).val())){
+                price_elem.text(parseInt($(amount_elem).val()) * parseInt(price_list[$(product_elem).val()]));
+            }
+        }
+    });
+    $(product_elem).bind('input propertychange', function () {
+        if(price_list.hasOwnProperty($(product_elem).val())){
+            if(isNumber($(amount_elem).val())){
+                price_elem.text(parseInt($(amount_elem).val()) * parseInt(price_list[$(product_elem).val()]));
+            }
+        }
+    });
+    $(amount_elem).bind('input propertychange', function (){
+        if(price_list.hasOwnProperty($(product_elem).val())){
+            if(isNumber($(amount_elem).val())){
+                $(price_elem).text(parseInt($(amount_elem).val()) * parseInt(price_list[$(product_elem).val()]));
+            }
+        }
+    })
+}
+
+

@@ -23,7 +23,7 @@ Version: 2.0
 <!-- BEGIN CONTAINER -->
 <div class="page-container">
     <!-- BEGIN SIDEBAR -->
-    <div th:replace="base :: commonSideBar(product)">
+    <div th:replace="base :: commonSideBar(customer)">
     </div>
     <!-- END SIDEBAR -->
     <!-- BEGIN CONTENT -->
@@ -38,11 +38,11 @@ Version: 2.0
                         <i class="fa fa-angle-right"></i>
                     </li>
                     <li>
-                        <a href="#">产品</a>
+                        <a href="#">客户</a>
                         <i class="fa fa-angle-right"></i>
                     </li>
                     <li>
-                        <a href="#">产品信息</a>
+                        <a href="#">共享管理</a>
                     </li>
                 </ul>
             </div>
@@ -66,48 +66,28 @@ Version: 2.0
                                 <thead>
                                 <tr>
                                     <th>
-                                        产品编号
+                                        客户
                                     </th>
                                     <th>
-                                        产品种类
+                                        共享的员工
                                     </th>
                                     <th>
-                                        产品数量
-                                    </th>
-                                    <th>
-                                        产品市场价格(￥)
-                                    </th>
-                                    <th>
-                                        产品成本(￥)
-                                    </th>
-                                    <th>
-                                        产品分析
+                                        操作
                                     </th>
                                 </tr>
                                 </thead>
                                 <!--插入数据-->
                                 <tbody>
-                                <tr class="odd gradeX" th:each="product : ${products}">
-                                    <td th:text="${product.getId()}">
-                                        shuxer
+                                <tr class="odd gradeX" th:each="info: ${infoSet}">
+                                    <td th:text="${info.get('customerName')}">
+                                        肥宅
                                     </td>
-                                    <td th:text="${product.getVariety()}">
-                                        <a href="mailto:shuxer@gmail.com">
-                                            shuxer@gmail.com </a>
+                                    <td th:text="${info.get('employeeName')}">
+                                        c3
                                     </td>
-                                    <td th:text="${product.getAmount()}">
-                                        120
-                                    </td>
-                                    <td class="center" th:text="${product.getPrice()}">
-                                        12 Jan 2012
-                                    </td>
-                                    <td th:text="${product.getCost()}">
-									<span class="label label-sm label-success">
-									Approved </span>
-                                    </td>
-                                    <td th:text="${product.getAnalysis()}">
-									<span class="label label-sm label-success">
-									Approved </span>
+                                    <td >
+                                        <a href="javascript:;" class="cancel_share">取消共享</a>
+                                        <input type="hidden" th:value="${info.get('employeeId')}">
                                     </td>
                                 </tr>
                                 </tbody>
@@ -130,24 +110,24 @@ Version: 2.0
 <!-- END FOOTER -->
 <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
 <!-- BEGIN CORE PLUGINS -->
-<script src="assets/plugins/jquery-1.11.0.min.js" type="text/javascript"></script>
-<script src="assets/plugins/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+<script src="/assets/plugins/jquery-1.11.0.min.js" type="text/javascript"></script>
+<script src="/assets/plugins/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
 <!-- IMPORTANT! Load jquery-ui-1.10.3.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
-<script src="assets/plugins/jquery-ui/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
-<script src="assets/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-<script src="assets/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
-<script src="assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
-<script src="assets/plugins/jquery.blockui.min.js" type="text/javascript"></script>
-<script src="assets/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+<script src="/assets/plugins/jquery-ui/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
+<script src="/assets/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="/assets/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+<script src="/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="/assets/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="/assets/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
 <!-- END CORE PLUGINS -->
 <!-- BEGIN PAGE LEVEL PLUGINS -->
-<script type="text/javascript" src="assets/plugins/select2/select2.min.js"></script>
-<script type="text/javascript" src="assets/plugins/datatables/media/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js"></script>
+<script type="text/javascript" src="/assets/plugins/select2/select2.min.js"></script>
+<script type="text/javascript" src="/assets/plugins/datatables/media/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js"></script>
 <!-- END PAGE LEVEL PLUGINS -->
 <!-- BEGIN PAGE LEVEL SCRIPTS -->
-<script src="assets/scripts/app.js"></script>
-<script src="assets/scripts/table-managed-product.js"></script>
+<script src="/assets/scripts/app.js"></script>
+<script src="/assets/scripts/table-managed-share-manage.js"></script>
 <script>
     jQuery(document).ready(function() {
         App.init(); // initlayout and core plugins

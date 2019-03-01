@@ -39,6 +39,7 @@ public class FollowUpRecordController {
             SaleOpportunity saleOpportunity = optionalSaleOpportunity.get();
             List<FollowUpRecord> followUpRecords = followUpRecordRepository.findAllBySaleOpportunity(saleOpportunity);
             mav.addObject("saleOpportunityId", saleOpportunity.getId());
+            mav.addObject("saleOpportunity", saleOpportunity);
             mav.addObject("followUpRecord", followUpRecords);
         }
         return mav;
@@ -65,7 +66,8 @@ public class FollowUpRecordController {
             String dateStr = jsonObject.getString("date");
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date date = sdf.parse(dateStr);
-            FollowUpRecord followUpRecord = new FollowUpRecord(saleOpportunity, jsonObject.getString("record"), date, false);
+            float cost = Float.parseFloat((String) jsonObject.get("cost"));
+            FollowUpRecord followUpRecord = new FollowUpRecord(saleOpportunity, cost, jsonObject.getString("record"), date, false);
             followUpRecordRepository.save(followUpRecord);
 
             responseMap.put("message", "添加成功");
@@ -93,6 +95,7 @@ public class FollowUpRecordController {
             fur.setDate(followUpRecord.getDate());
             fur.setDeclare(false);
             fur.setRecord(followUpRecord.getRecord());
+            fur.setCost(followUpRecord.getCost());
             followUpRecordRepository.save(fur);
 
             responseMap.put("message", "修改成功");
@@ -146,6 +149,7 @@ public class FollowUpRecordController {
             sdf.parse(jsonObject.getString("date"));
             jsonObject.getString("record");
             jsonObject.getInt("saleOpportunityId");
+            Float.parseFloat((String) jsonObject.get("cost"));
             if(jsonObject.getString("record").equals(""))
                 return false;
         }catch (Exception e){

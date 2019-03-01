@@ -86,7 +86,9 @@
                                         <select class="form-control input-small select2me" data-placeholder="选择员工" th:with="first=${true}">
                                             <option value="" th:with="first = ${false}" th:if="${first}==true"></option>
                                             <div th:each="employee: ${employees}" th:remove="tag">
-                                                <option value="AL" th:if="${employee.getId()}!=${session.employeenum}" th:text="${employee.getId()}">1</option>
+                                                <div th:if="${employee.getCustomers().contains(customer)}==false">
+                                                    <option value="AL" th:if="${employee.getId()}!=${session.employeenum}" th:text="${employee.getId()}">1</option>
+                                                </div>
                                             </div>
                                             <!--<option value="WY">2</option>-->
                                         </select>

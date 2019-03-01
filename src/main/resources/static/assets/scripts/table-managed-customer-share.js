@@ -101,11 +101,14 @@ var TableManaged = function () {
             }
             else
             {
+                if(!confirm("是否确认共享？")){
+                    return false;
+                }
                 var url = "/customer/shareCustomer";
                 var d = gatherRowData(nRow);
                 if(d === null) return;
                 ajaxUpload(url, "GET", d);
-                window.location.href = "/";
+                window.location.reload();
             }
         });
 

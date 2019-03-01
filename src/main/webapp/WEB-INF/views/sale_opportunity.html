@@ -90,7 +90,7 @@ Version: 2.0
                                         Alex Nilson
                                     </td>
                                     <td>
-                                        <span th:each="product : ${saleOpportunity.getProducts()}" th:remove="tag"><span th:text="${product.getId()}+' '" th:remove="tag"></span></span>
+                                        <span th:each="product : ${saleOpportunity.getProducts()}" th:remove="tag"><span th:text="${product.getVariety()}+'&nbsp;&nbsp;&nbsp;'" th:remove="tag"></span></span>
                                     </td>
                                     <td>
                                         <a class="getopp" href="javascript:;">

@@ -25,7 +25,7 @@ var TableEditable = function () {
                 '                                          </ul>\n' +
                 '                                      </div>\n' +
                 '                                  </div>';
-            input_config_product("id", true);
+            input_config_product("variety", true);
             jqTds[2].innerHTML = '<div class="input-group">\n' +
                 '                                      <input class="form-control input-small" type="text" id="cus" autocomplete="off" value="' + aData[2] + '" data-id alt>\n' +
                 '                                      <div style="position: fixed;z-index: 2">\n' +
@@ -48,7 +48,7 @@ var TableEditable = function () {
                 '                                          </ul>\n' +
                 '                                      </div>\n' +
                 '                                  </div>';
-            input_config_product("id", true);
+            input_config_product("variety", true);
             jqTds[2].innerHTML = '<div class="input-group">\n' +
                 '                                      <input class="form-control input-small" type="text" id="cus" autocomplete="off" value="' + aData[2] + '" data-id alt>\n' +
                 '                                      <div style="position: fixed;z-index: 2">\n' +
@@ -93,20 +93,13 @@ var TableEditable = function () {
             var c0V = $(nRow).children("td").eq(0).text();
             if(c0V === ""||c0V===null) action_type = "add";
             else action_type = "update";
-            var c1V = $.trim(jqInputs[0].value).split(" ");
+            var c1V = $.trim(jqInputs[0].value).split(' ');
             var c2V = jqInputs[1].value;
             var current_id = $("#current_employee_id").attr("value");
 
             if(!check_null([c1V, c2V, current_id])){
                 alert("请完整填写数据");
                 return null;
-            }
-
-            for(var i = 0; i < c1V.length; i++){
-                if(!isNumber(c1V[i])){
-                    alert("订单产品编号必须全部为数字");
-                    return;
-                }
             }
 
             return {"id": c0V, "productIds": c1V, "customerName": c2V, "findEmployeeId": current_id};
@@ -279,6 +272,9 @@ var TableEditable = function () {
             }
         });
         $(".complete").click(function () {
+            if(!confirm("是否确认完成？")){
+                return false;
+            }
             ajaxUpload("/sale_opportunity/complete", "POST", {"saleOpportunityId": $(this).parent().parent().children("td").eq(0).text()});
         });
         table2.on('click', '.sonpage', function (e) {

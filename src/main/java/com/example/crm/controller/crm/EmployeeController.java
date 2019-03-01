@@ -22,16 +22,16 @@ public class EmployeeController {
     @GetMapping("list")
     public ResponseEntity<Map<String, Object>> list(){
         Iterable<Employee> iterable = employeeRepository.findAll();
-        List<Map<String, String>> cusInfoList = new ArrayList<>();
-        for(Employee cus : iterable){
+        List<Map<String, String>> EmpInfoList = new ArrayList<>();
+        for(Employee emp : iterable){
             Map<String, String> empMap = new HashMap<>();
-            empMap.put("id", cus.getId().toString());
-            empMap.put("name", cus.getName());
-            empMap.put("tel", cus.getTel());
-            cusInfoList.add(empMap);
+            empMap.put("id", emp.getId().toString());
+            empMap.put("name", emp.getName());
+            empMap.put("tel", emp.getTel());
+            EmpInfoList.add(empMap);
         }
         Map<String, Object> map = new HashMap<>();
-        map.put("value", cusInfoList);
+        map.put("value", EmpInfoList);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 

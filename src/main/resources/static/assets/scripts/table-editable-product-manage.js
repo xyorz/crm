@@ -181,10 +181,12 @@ var TableEditable = function () {
 
             if (nNew) {
                 oTable.fnDeleteRow(nEditing);
+                nEditing = null;
                 nNew = false;
             } else {
                 restoreRow(oTable, nEditing);
                 nEditing = null;
+                nNew= false;
             }
         });
 
@@ -211,6 +213,7 @@ var TableEditable = function () {
                 var url = null;
                 if(action_type==="add") url = "/product";
                 else url = "/product/update";
+                console.log(JSON.stringify(data));
                 ajaxUpload(url, "POST", data);
                 saveRow(oTable, nEditing);
                 nEditing = null;

@@ -23,7 +23,7 @@ var TableEditable = function () {
                 '                                          </ul>\n' +
                 '                                      </div>\n' +
                 '                                  </div>';
-            input_config_customer("id");
+            input_config_customer("name");
             // jqTds[2].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[2] + '">';
             jqTds[3].innerHTML = '<div class="input-group">\n' +
                 '                                      <input class="form-control input-small" type="text" id="pro" autocomplete="off" value="' + aData[3] + '" data-id alt>\n' +
@@ -32,27 +32,32 @@ var TableEditable = function () {
                 '                                          </ul>\n' +
                 '                                      </div>\n' +
                 '                                  </div>';
-            input_config_product("id", false);
+            input_config_product("variety", false);
+            // console.log(jqInputs);
             jqTds[4].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[4] + '">';
-            jqTds[5].innerHTML = '0';
-            jqTds[6].innerHTML = '未完成';
-            jqTds[7].innerHTML = '未开具';
-            jqTds[8].innerHTML = '';
-            jqTds[9].innerHTML = '<a class="edit" href="">保存</a>';
-            jqTds[10].innerHTML = '<a class="cancel" href="">放弃</a>';
+            var jqInputs = $('input', nRow);
+            listen_input_change(jqInputs[1], jqInputs[2], jqTds[5], price_list);
+
+            // jqTds[5].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[5] + '">';
+            jqTds[6].innerHTML = '0';
+            jqTds[7].innerHTML = '未完成';
+            jqTds[8].innerHTML = '未开具';
+            jqTds[9].innerHTML = '';
+            jqTds[10].innerHTML = '<a class="edit" href="">保存</a>';
+            jqTds[11].innerHTML = '<a class="cancel" href="">放弃</a>';
         }
         function editRow1(oTable, nRow) {
             var aData = oTable.fnGetData(nRow);
             var jqTds = $('>td', nRow);
-            jqTds[5].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[5] + '">';
-            jqTds[7].innerHTML = '          <select class="form-control input-small select2me" id="receipt_status">\n' +
+            jqTds[6].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[6] + '">';
+            jqTds[8].innerHTML = '          <select class="form-control input-small select2me" id="receipt_status">\n' +
                 '                                    <option value="AL">未开具</option>\n' +
                 '                                    <option value="WY">已开具</option>\n' +
                 '                           </select>';
             // jqTds[7].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[7] + '">';
-            jqTds[8].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[8] + '">';
-            jqTds[9].innerHTML = '<a class="edit" href="">保存</a>';
-            jqTds[10].innerHTML = '<a class="cancel" href="">放弃</a>';
+            jqTds[9].innerHTML = '<input type="text" class="form-control input-small" value="' + aData[9] + '">';
+            jqTds[10].innerHTML = '<a class="edit" href="">保存</a>';
+            jqTds[11].innerHTML = '<a class="cancel" href="">放弃</a>';
         }
 
         function saveRow(oTable, nRow) {
@@ -64,6 +69,7 @@ var TableEditable = function () {
                 oTable.fnUpdate(jqInputs[1].value, nRow, 2, false);
                 oTable.fnUpdate(jqInputs[2].value, nRow, 3, false);
                 oTable.fnUpdate(jqInputs[3].value, nRow, 4, false);
+                oTable.fnUpdate(jqInputs[4].value, nRow, 4, false);
                 oTable.fnUpdate('0', nRow, 5, false);
                 oTable.fnUpdate('未完成', nRow, 6, false);
                 oTable.fnUpdate('未开具', nRow, 7, false);
@@ -107,12 +113,14 @@ var TableEditable = function () {
             var status = "未完成";
             var receiptStatus = "未开具";
             var record = "";
+            var amount = 0;
             if(action_type==='add'){
                 id = c0V;
                 customerId = jqInputs[0].value;
                 productId = jqInputs[1].value;
-                value = jqInputs[2].value;
-                paidValue = nRow.cells[5].innerText;
+                amount = jqInputs[2].value;
+                value = nRow.cells[5].innerText;
+                paidValue = nRow.cells[6].innerText;
                 status = false;
                 receiptStatus = false;
                 record = "";
@@ -121,10 +129,10 @@ var TableEditable = function () {
                 id = c0V;
                 customerId = nRow.cells[1].innerText;
                 productId = nRow.cells[3].innerText;
-                value = nRow.cells[4].innerText;
+                amount = nRow.cells[4].innerText;
+                value = nRow.cells[5].innerText;
                 paidValue = jqInputs[0].value;
                 status = 0;
-                console.log(nRow.cells[7].innerText);
                 receiptStatus = $("#receipt_status").find("option:selected").text() === "已开具";
                 record = jqInputs[1].value;
             }
@@ -132,25 +140,13 @@ var TableEditable = function () {
                 alert("请完整填写数据");
                 return null;
             }
-            if(!isNumber(customerId)){
-                alert("客户编号必须是数字");
-                return null;
-            }
-            if(!isNumber(value)) {
-                alert("订单总金额必须是数字");
-                return null;
-            }
-            if(!isNumber(productId)) {
-                alert("产品编号必须是数字");
-                return null;
-            }
             if(!isNumber(paidValue)) {
                 alert("订单已支付金额必须是数字");
                 return null;
             }
 
-            return {"id": id, "customerId": customerId, "value": value, "productId": productId, "paidValue": paidValue,
-                "status": status, "receiptStatus": receiptStatus, "record": record};
+            return {"id": id, "customerName": customerId, "amount": amount, "productName": productId, "value": value,
+                "paidValue": paidValue, "status": status, "receiptStatus": receiptStatus, "record": record};
         }
 
         function ajaxUpload(url, method, data) {
@@ -215,7 +211,7 @@ var TableEditable = function () {
             e.preventDefault();
             if(nNew==false && nEditing==null)
             {
-                var aiNew = oTable.fnAddData(['', '', '', '', '', '','', '', '', '', '']);
+                var aiNew = oTable.fnAddData(['', '', '', '', '', '','', '', '', '', '', '']);
                 var nRow = oTable.fnGetNodes(aiNew[0]);
                 editRow(oTable, nRow);
                 nEditing = nRow;
@@ -235,7 +231,7 @@ var TableEditable = function () {
             }
 
             var nRow = $(this).parents('tr')[0];
-            if(nRow.cells[5].innerText!=0)
+            if(nRow.cells[6].innerText!=0)
             {
                 alert("订单已进行了支付，不能删除");
             }
@@ -289,7 +285,8 @@ var TableEditable = function () {
                 nEditing = nRow;
             } else if (nEditing == nRow && this.innerHTML == "保存") {
                 /* Editing this row and want to save it */
-                if(nNew==true || nRow.cells[4].innerText>jqInputs[0].value){
+            // nNew==true|| nRow.cells[5].innerText>=jqInputs[0].value
+                if(true){
                     var data = gatherRowData(nEditing);
                     if(data === null) return;
                     var url = null;
